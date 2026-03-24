@@ -1,0 +1,20 @@
+
+why only @Required arg const in  service
+
+ @RequiredArgsConstructor generates a constructor with required arguments (final fields or @NonNull).
+ This is useful for dependency injection. Spring will automatically inject dependencies into this constructor.
+
+ Why not use @NoArgsConstructor?
+ A no-args constructor is not recommended when you have dependencies because it doesn't allow Spring
+ to inject those dependencies automatically. You'd need to manually set the dependencies later.
+
+ Why not use @Getter and @Setter?
+ @Getter and @Setter are used to generate getters and setters for fields, but they are not needed
+ when you’re using constructor-based injection, as Spring injects dependencies via the constructor.
+
+
+   --------------public Optional<User> findByEmail(String email);
+
+ findByEmail(String email), Spring Data JPA uses the method name to derive a query. It will look for a column email in the User entity and automatically generate a query like:
+ SELECT * FROM user WHERE email = ?;
+ The ? will be replaced by the value passed in as the argument (email).
