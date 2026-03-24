@@ -18,3 +18,23 @@ why only @Required arg const in  service
  findByEmail(String email), Spring Data JPA uses the method name to derive a query. It will look for a column email in the User entity and automatically generate a query like:
  SELECT * FROM user WHERE email = ?;
  The ? will be replaced by the value passed in as the argument (email).
+
+
+ . Why Request & Response DTO separately?
+ ❓ Why not one DTO?
+
+ Because input ≠ output
+
+ 🔹 Request DTO
+ Contains password
+ Required fields only
+ 🔹 Response DTO
+ No password
+ May include extra fields (id, timestamps)
+
+
+ Controller → RequestDTO → Service → Entity → DB
+                                    ↓
+ Controller ← ResponseDTO ← Service
+
+// BCryptPasswordEncoder is the default password encoder

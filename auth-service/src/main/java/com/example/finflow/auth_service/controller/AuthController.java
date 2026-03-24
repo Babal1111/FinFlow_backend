@@ -19,11 +19,10 @@ public class AuthController {
     //Lombok generates constructor --> Spring injects bean
 
     @PostMapping("/register")
-    public String register(@RequestBody User user) {
-        authService.register(user);
-        return "userCreated";
+    public ResponseEntity<User> register(@RequestBody User user) {
+        return new ResponseEntity<>(authService.register(user),HttpStatus.CREATED);
     }
-    @GetMapping("/users")
+    @GetMapping("/getAll")
     public List<User> getAllUsers() {
         return authService.getAllUsers();
     }
