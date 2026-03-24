@@ -1,5 +1,9 @@
 package com.example.finflow.auth_service.controller;
 
+import com.example.finflow.auth_service.dto.AuthResponseDto;
+import com.example.finflow.auth_service.dto.LoginRequestDto;
+import com.example.finflow.auth_service.dto.RegisterRequestDto;
+import com.example.finflow.auth_service.dto.UserResponseDto;
 import com.example.finflow.auth_service.entity.User;
 import com.example.finflow.auth_service.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -19,29 +23,33 @@ public class AuthController {
     //Lombok generates constructor --> Spring injects bean
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        return new ResponseEntity<>(authService.register(user),HttpStatus.CREATED);
+    public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterRequestDto req) {
+        return ResponseEntity.ok(authService.register(req));
+    }
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto req){
+        return ResponseEntity.ok(authService.login(req));
     }
     @GetMapping("/getAll")
-    public List<User> getAllUsers() {
-        return authService.getAllUsers();
+    public ResponseEntity<List<UserResponseDto>>getAllUsers() {
+        return ResponseEntity.ok(authService.getAllUsers());
     }
 
 
     @GetMapping("/users/{id}")
-    public User getUser(@PathVariable Long id) {
-        return authService.getUserById(id);
+    public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
+        return ResponseEntity.ok(authService.getUserById(id));
     }
 
 
     @GetMapping("/users/email")
-    public User getByEmail(@RequestParam String email) {
-        return authService.getUserByEmail(email);
+    public ResponseEntity<UserResponseDto> getByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(authService.getUserByEmail(email));
     }
 
     @PutMapping("/users/{id}")
-    public User update(@PathVariable Long id, @RequestBody User user) {
-        return authService.updateUser(id, user);
+    public ResponseEntity<UserResponseDto> update(@PathVariable Long id, @RequestBody User user) {
+        return ResponseEntity.ok(authService.updateUser(id, user));
     }
 
 

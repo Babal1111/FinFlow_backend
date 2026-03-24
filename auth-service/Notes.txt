@@ -37,4 +37,12 @@ why only @Required arg const in  service
                                     ↓
  Controller ← ResponseDTO ← Service
 
-// BCryptPasswordEncoder is the default password encoder
+// BCryptPasswordEncoder is the default password encoder\
+// user.getRole will give us enum, user.getRole().name() will give us string
+
+
+
+
+            // The Optional.get() method returns the value inside the Optional if it is present.
+            // However, it is generally considered risky because if you call get() without first checking with isPresent(),
+            // you might run into a noSuch element exception

@@ -1,5 +1,6 @@
 package com.example.finflow.auth_service.dto;
 
+import com.example.finflow.auth_service.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -20,6 +21,6 @@ public class RegisterRequestDto {
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
-    //private Role role = Role.APPLICANT;
+    private Role role = Role.APPLICANT;
 
 }
