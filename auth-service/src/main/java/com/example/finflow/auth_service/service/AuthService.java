@@ -10,6 +10,8 @@ import com.example.finflow.auth_service.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,21 +33,8 @@ public class AuthService {
 
     public AuthResponseDto register(RegisterRequestDto req){
         Optional<User> existingUser = userRepository.findByEmail(req.getEmail());
-        if(existingUser.isPresent()){
-            User oldUSer = existingUser.get();
-
-            oldUSer.setName(req.getName());
-            oldUSer.setEmail(req.getEmail());
-            userRepository.save(oldUSer);  // IMP Save the updated user
-
-            String token = jwtUtil.generateToken(oldUSer.getEmail(), oldUSer.getRole().name());
-            System.out.println("Token genrated after reg: "+token);
-            return new AuthResponseDto(
-                    req.getName(),
-                    req.getEmail(),
-                    token,
-                    req.getRole().name(),
-                    "User already existed, updation successful");
+        if (userRepository.existsByEmail(req.getEmail())) {
+            throw new RuntimeException("Email already registered");
         }else{
             System.out.println("before hashing");
             String hashedPassword = passwordEncoder.encode(req.getPassword());
@@ -98,11 +87,11 @@ public class AuthService {
     }
     public UserResponseDto updateUser(Long id, User newUser) {
         User oldUser = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if (!oldUser.getEmail().equals(newUser.getEmail()) && userRepository.existsByEmail(newUser.getEmail())) {
-            throw new RuntimeException("Email already in use");
-        }
+//        if (!oldUser.getEmail().equals(newUser.getEmail()) && userRepository.existsByEmail(newUser.getEmail())) {
+//            throw new RuntimeException("Email already in use");
+//        }
 
         oldUser.setName(newUser.getName());
         oldUser.setEmail(newUser.getEmail());

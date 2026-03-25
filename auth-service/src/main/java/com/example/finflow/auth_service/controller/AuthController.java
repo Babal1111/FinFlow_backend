@@ -9,6 +9,7 @@ import com.example.finflow.auth_service.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,18 +31,20 @@ public class AuthController {
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto req){
         return ResponseEntity.ok(authService.login(req));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAll")
     public ResponseEntity<List<UserResponseDto>>getAllUsers() {
         return ResponseEntity.ok(authService.getAllUsers());
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/{id}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(authService.getUserById(id));
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/email")
     public ResponseEntity<UserResponseDto> getByEmail(@RequestParam String email) {
         return ResponseEntity.ok(authService.getUserByEmail(email));
