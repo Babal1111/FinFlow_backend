@@ -46,3 +46,5 @@ why only @Required arg const in  service
             // The Optional.get() method returns the value inside the Optional if it is present.
             // However, it is generally considered risky because if you call get() without first checking with isPresent(),
             // you might run into a noSuch element exception
+
+ModelMapper won’t convert Enum → String automatically

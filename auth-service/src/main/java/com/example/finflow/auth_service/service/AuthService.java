@@ -7,6 +7,7 @@ import com.example.finflow.auth_service.dto.UserResponseDto;
 import com.example.finflow.auth_service.entity.User;
 import com.example.finflow.auth_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    @Autowired
-    public final UserRepository userRepository;
 
-    @Autowired
-    public final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final ModelMapper modelMapper;
 
 
     public AuthResponseDto register(RegisterRequestDto req){
@@ -79,14 +81,10 @@ public class AuthService {
 
         User user = userRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("User not found"));
-
-        return new UserResponseDto(
-            user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole().name(),
-                user.getCreatedAt() != null ? user.getCreatedAt().toString() : null
-        );
+        UserResponseDto dto = modelMapper.map(user,UserResponseDto.class);
+        //ModelMapper won’t convert Enum --> String automatically
+        dto.setRole(user.getRole().name());
+        return  dto;
 
     }
     public void deleteUser(Long id) {
@@ -108,22 +106,17 @@ public class AuthService {
         }
 
         userRepository.save(oldUser);
-        return new UserResponseDto(
-                oldUser.getId(),
-                oldUser.getName(),
-                oldUser.getEmail(),
-                oldUser.getRole().name(),
-                oldUser.getCreatedAt() != null ? oldUser.getCreatedAt().toString() : null
-        );
+        UserResponseDto dto = modelMapper.map(oldUser,UserResponseDto.class);
+        dto.setRole(oldUser.getRole().name());
+        return dto;
     }
     public UserResponseDto getUserByEmail(String email) {
                 User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-                return new UserResponseDto(user.getId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getRole().name(),
-                        user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
+
+        UserResponseDto dto = modelMapper.map(user,UserResponseDto.class);
+        dto.setRole(user.getRole().name());
+        return dto;
     }
 
     public AuthResponseDto login(LoginRequestDto req){
@@ -133,6 +126,7 @@ public class AuthService {
         if(!passwordEncoder.matches(req.getPassword(), user.getPassword())){
             throw new RuntimeException("INVALID  PASSWORD");
         }
+
         return new AuthResponseDto(
                 user.getName(),
                 user.getEmail(),
