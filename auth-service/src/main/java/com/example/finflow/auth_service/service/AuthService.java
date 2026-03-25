@@ -6,6 +6,7 @@ import com.example.finflow.auth_service.dto.RegisterRequestDto;
 import com.example.finflow.auth_service.dto.UserResponseDto;
 import com.example.finflow.auth_service.entity.User;
 import com.example.finflow.auth_service.repository.UserRepository;
+import com.example.finflow.auth_service.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ public class AuthService {
 
     private final ModelMapper modelMapper;
 
+    private final JwtUtil jwtUtil;
 
     public AuthResponseDto register(RegisterRequestDto req){
         Optional<User> existingUser = userRepository.findByEmail(req.getEmail());
@@ -36,10 +38,12 @@ public class AuthService {
             oldUSer.setEmail(req.getEmail());
             userRepository.save(oldUSer);  // IMP Save the updated user
 
+            String token = jwtUtil.generateToken(oldUSer.getEmail(), oldUSer.getRole().name());
+            System.out.println("Token genrated after reg: "+token);
             return new AuthResponseDto(
                     req.getName(),
                     req.getEmail(),
-                    null,
+                    token,
                     req.getRole().name(),
                     "User already existed, updation successful");
         }else{
@@ -54,10 +58,12 @@ public class AuthService {
             userRepository.save(user);
 
             userRepository.save(user);  // Save the new user to the database
+            String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+            System.out.println("Token genrated after reg: "+token);
             return new AuthResponseDto(
                     req.getName(),
                     req.getEmail(),
-                    null,
+                    token,
                     req.getRole().name(),
                     " New Registration successful");
         }
@@ -126,11 +132,12 @@ public class AuthService {
         if(!passwordEncoder.matches(req.getPassword(), user.getPassword())){
             throw new RuntimeException("INVALID  PASSWORD");
         }
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
         return new AuthResponseDto(
                 user.getName(),
                 user.getEmail(),
-                null,
+                token,
                 user.getRole().name(),
                 "Login successful");     // JWT later
 
