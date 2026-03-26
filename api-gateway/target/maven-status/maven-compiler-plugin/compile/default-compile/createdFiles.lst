@@ -1,0 +1,2 @@
+com\finflow\gateway\config\JwtFilter.class
+com\finflow\gateway\ApiGatewayApplication.class
