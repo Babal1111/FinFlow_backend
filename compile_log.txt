@@ -1,0 +1,23 @@
+[INFO] Scanning for projects...
+[ERROR] [ERROR] Some problems were encountered while processing the POMs:
+[ERROR] Malformed POM C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\application-service\pom.xml: Unrecognised tag: 'n' (position: START_TAG seen ...</artifactId>\n    <n>... @15:8)  @ C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\application-service\pom.xml, line 15, column 8
+[ERROR] Malformed POM C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\admin-service\pom.xml: Unrecognised tag: 'n' (position: START_TAG seen ...</artifactId>\n    <n>... @15:8)  @ C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\admin-service\pom.xml, line 15, column 8
+[ERROR] Malformed POM C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\api-gateway\pom.xml: Unrecognised tag: 'n' (position: START_TAG seen ...</artifactId>\n    <n>... @15:8)  @ C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\api-gateway\pom.xml, line 15, column 8
+ @ 
+[ERROR] The build could not read 3 projects -> [Help 1]
+[ERROR]   
+[ERROR]   The project com.finflow:application-service:1.0.0 (C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\application-service\pom.xml) has 1 error
+[ERROR]     Malformed POM C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\application-service\pom.xml: Unrecognised tag: 'n' (position: START_TAG seen ...</artifactId>\n    <n>... @15:8)  @ C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\application-service\pom.xml, line 15, column 8 -> [Help 2]
+[ERROR]   
+[ERROR]   The project com.finflow:admin-service:1.0.0 (C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\admin-service\pom.xml) has 1 error
+[ERROR]     Malformed POM C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\admin-service\pom.xml: Unrecognised tag: 'n' (position: START_TAG seen ...</artifactId>\n    <n>... @15:8)  @ C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\admin-service\pom.xml, line 15, column 8 -> [Help 2]
+[ERROR]   
+[ERROR]   The project com.finflow:api-gateway:1.0.0 (C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\api-gateway\pom.xml) has 1 error
+[ERROR]     Malformed POM C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\api-gateway\pom.xml: Unrecognised tag: 'n' (position: START_TAG seen ...</artifactId>\n    <n>... @15:8)  @ C:\Users\babal\Downloads\FinFlow (2)\FinFlow\FinFlow\api-gateway\pom.xml, line 15, column 8 -> [Help 2]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/ProjectBuildingException
+[ERROR] [Help 2] http://cwiki.apache.org/confluence/display/MAVEN/ModelParseException

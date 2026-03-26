@@ -1,0 +1,12 @@
+com\finflow\document\service\DocumentService.class
+com\finflow\document\dto\DocumentResponse.class
+com\finflow\document\DocumentServiceApplication.class
+com\finflow\document\controller\DocumentController.class
+com\finflow\document\repository\DocumentRepository.class
+com\finflow\document\entity\DocumentStatus.class
+com\finflow\document\dto\DocumentRequest.class
+com\finflow\document\dto\DocumentMapper.class
+com\finflow\document\dto\DocumentMapperImpl.class
+com\finflow\document\entity\Document.class
+com\finflow\document\entity\DocumentType.class
+com\finflow\document\exception\GlobalExceptionHandler.class
