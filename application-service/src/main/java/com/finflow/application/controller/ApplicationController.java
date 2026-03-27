@@ -82,7 +82,12 @@ public class ApplicationController {
     @PutMapping("/{id}/status")
     public ResponseEntity<Void> updateStatus(
             @PathVariable("id") Long id,
-            @RequestParam("status") ApplicationStatus status) {
+            @RequestParam("status") ApplicationStatus status,
+            @RequestHeader("X-User-Role") String role) {
+
+        if (!"ADMIN".equals(role)) {
+            throw new RuntimeException("Access denied!");
+        }
 
         log.info("Update status for application id: {} to {}", id, status);
         applicationService.updateStatus(id, status);

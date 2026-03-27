@@ -39,7 +39,14 @@ public class AdminService {
     // ─────────────────────────────────────────────────────────────
     public List<?> getAllApplications() {
         String url = applicationServiceUrl + "/applications/all";
-        List<?> applications = restTemplate.getForObject(url, List.class);
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-User-Role", "ADMIN");
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        org.springframework.http.ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
+        List<?> applications = response.getBody();
+
         log.info("Fetched {} applications",
                 applications != null ? applications.size() : 0);
         return applications;
@@ -85,7 +92,7 @@ public class AdminService {
     // ─────────────────────────────────────────────────────────────
     // VERIFY DOCUMENT — Delegate to Document Service
     // ─────────────────────────────────────────────────────────────
-    public void verifyDocument(Long documentId,
+    public Object verifyDocument(Long documentId,
                                boolean approved,
                                Long adminId) {
 
@@ -98,9 +105,10 @@ public class AdminService {
         headers.set("X-User-Id", adminId.toString());
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
+        org.springframework.http.ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.PUT, entity, Object.class);
         log.info("Document {} {}", documentId,
                 approved ? "verified" : "rejected");
+        return response.getBody();
     }
 
     // ─────────────────────────────────────────────────────────────

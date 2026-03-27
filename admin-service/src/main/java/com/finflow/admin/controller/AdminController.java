@@ -61,7 +61,7 @@ public class AdminController {
     // Verify or reject a document
     // ─────────────────────────────────────────────────────────────
     @PutMapping("/documents/{id}/verify")
-    public ResponseEntity<Void> verifyDocument(
+    public ResponseEntity<Object> verifyDocument(
             @PathVariable Long id,
             @RequestParam boolean approved,
             @RequestHeader("X-User-Id") Long adminId,
@@ -72,8 +72,8 @@ public class AdminController {
         }
 
         log.info("Verify document request for id: {}", id);
-        adminService.verifyDocument(id, approved, adminId);
-        return ResponseEntity.ok().build();
+        Object documentResponse = adminService.verifyDocument(id, approved, adminId);
+        return ResponseEntity.ok(documentResponse);
     }
 
     // ─────────────────────────────────────────────────────────────
