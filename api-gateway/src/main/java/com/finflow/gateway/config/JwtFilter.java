@@ -63,15 +63,22 @@ public class JwtFilter implements GlobalFilter, Ordered {
 
             // Step 4: UserId aur Role headers mein inject karo
             // Downstream services yeh headers use karenge
+
             ServerWebExchange modifiedExchange = exchange.mutate()
                     .request(exchange.getRequest().mutate()
-                            .header("X-User-Id",
-                                    claims.get("userId").toString())
-                            .header("X-User-Role",
-                                    claims.get("role").toString())
+                            .headers(headers -> {
+                                // Remove client-supplied headers first ← this is the key
+                                headers.remove("X-User-Id");
+                                headers.remove("X-User-Role");
+                            })
+                            .header("X-User-Id", claims.get("userId").toString())
+                            .header("X-User-Role", claims.get("role").toString())
                             .build())
                     .build();
-
+//            The .header() method in Spring WebFlux appends to existing headers, it does not replace them.
+//            So if you send X-User-Role: ADMIN from Postman, and the Gateway also
+//            adds X-User-Role: APPLICANT from your JWT, the downstream service receives both values.
+//             When it calls request.getHeader("X-User-Role") it gets the first one — which is your manually injected ADMIN.
             return chain.filter(modifiedExchange);
 
         } catch (Exception e) {

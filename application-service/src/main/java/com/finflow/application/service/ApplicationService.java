@@ -1,6 +1,6 @@
 package com.finflow.application.service;
 
-import com.finflow.application.dto.ApplicationMapper;
+import org.modelmapper.ModelMapper;
 import com.finflow.application.dto.ApplicationRequest;
 import com.finflow.application.dto.ApplicationResponse;
 import com.finflow.application.dto.StatusResponse;
@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
-    private final ApplicationMapper mapper;
+    private final ModelMapper modelMapper;
 
     public ApplicationResponse create(ApplicationRequest request, Long userId) {
 
 
-        LoanApplication application = mapper.toEntity(request);
+        LoanApplication application = modelMapper.map(request, LoanApplication.class);
 
 
         application.setUserId(userId);
@@ -36,7 +36,7 @@ public class ApplicationService {
         LoanApplication saved = applicationRepository.save(application);
         log.info("Application created with id: {}", saved.getId());
 
-        return mapper.toResponse(saved);
+        return modelMapper.map(saved, ApplicationResponse.class);
     }
 
 
@@ -53,12 +53,12 @@ public class ApplicationService {
         }
 
 
-        mapper.updateEntity(request, application);
+        modelMapper.map(request, application);
 
         LoanApplication updated = applicationRepository.save(application);
         log.info("Application updated with id: {}", updated.getId());
 
-        return mapper.toResponse(updated);
+        return modelMapper.map(updated, ApplicationResponse.class);
     }
 
 
@@ -88,7 +88,7 @@ public class ApplicationService {
     public List<ApplicationResponse> getMyApplications(Long userId) {
         return applicationRepository.findByUserId(userId)
                 .stream()
-                .map(mapper::toResponse)
+                .map(app -> modelMapper.map(app, ApplicationResponse.class))
                 .collect(Collectors.toList());
     }
 
@@ -125,5 +125,12 @@ public class ApplicationService {
         }
 
         return application;
+    }
+    public List<ApplicationResponse> getAllApplications() {
+        return applicationRepository.findAll()
+                .stream()
+                .filter(app -> app.getStatus() != ApplicationStatus.DRAFT) // exclude drafts
+                .map(app -> modelMapper.map(app, ApplicationResponse.class))
+                .collect(Collectors.toList());
     }
 }

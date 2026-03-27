@@ -1,6 +1,6 @@
 package com.finflow.document.service;
 
-import com.finflow.document.dto.DocumentMapper;
+import org.modelmapper.ModelMapper;
 import com.finflow.document.dto.DocumentResponse;
 import com.finflow.document.entity.Document;
 import com.finflow.document.entity.DocumentStatus;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
-    private final DocumentMapper mapper;
+    private final ModelMapper modelMapper;
 
     @Value("${app.upload.dir}")
     private String uploadDir;
@@ -78,14 +78,14 @@ public class DocumentService {
         Document saved = documentRepository.save(document);
         log.info("Document uploaded with id: {}", saved.getId());
 
-        return mapper.toResponse(saved);
+        return modelMapper.map(saved, DocumentResponse.class);
     }
 
 
     public List<DocumentResponse> getByApplicationId(Long applicationId) {
         return documentRepository.findByApplicationId(applicationId)
                 .stream()
-                .map(mapper::toResponse)
+                .map(doc -> modelMapper.map(doc, DocumentResponse.class))
                 .collect(Collectors.toList());
     }
 
@@ -108,6 +108,6 @@ public class DocumentService {
         log.info("Document {} {}", documentId,
                 approved ? "verified" : "rejected");
 
-        return mapper.toResponse(updated);
+        return modelMapper.map(updated, DocumentResponse.class);
     }
 }

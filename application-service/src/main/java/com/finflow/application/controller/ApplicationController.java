@@ -70,7 +70,7 @@ public class ApplicationController {
 
     @GetMapping("/{id}/status")
     public ResponseEntity<StatusResponse> getStatus(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestHeader("X-User-Id") Long userId) {
 
         log.info("Get status for application id: {}", id);
@@ -81,11 +81,23 @@ public class ApplicationController {
 
     @PutMapping("/{id}/status")
     public ResponseEntity<Void> updateStatus(
-            @PathVariable Long id,
-            @RequestParam ApplicationStatus status) {
+            @PathVariable("id") Long id,
+            @RequestParam("status") ApplicationStatus status) {
 
         log.info("Update status for application id: {} to {}", id, status);
         applicationService.updateStatus(id, status);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ApplicationResponse>> getAllApplications(
+            @RequestHeader("X-User-Role") String role) {
+
+        if (!role.equals("ADMIN")) {
+            throw new RuntimeException("Access denied!");
+        }
+
+        log.info("Fetch all applications for admin");
+        return ResponseEntity.ok(applicationService.getAllApplications());
     }
 }

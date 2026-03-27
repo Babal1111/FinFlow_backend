@@ -4,6 +4,7 @@ com\finflow\auth\controller\AuthController.class
 com\finflow\auth\dto\SignupRequest.class
 com\finflow\auth\entity\RefreshToken.class
 com\finflow\auth\repository\RefreshTokenRepository.class
+com\finflow\auth\config\ModelMapperConfig.class
 com\finflow\auth\AuthServiceApplication.class
 com\finflow\auth\security\JwtAuthFilter.class
 com\finflow\auth\config\SecurityConfig.class

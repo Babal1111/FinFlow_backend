@@ -1,6 +1,6 @@
 package com.finflow.admin.service;
 
-import com.finflow.admin.dto.DecisionMapper;
+import org.modelmapper.ModelMapper;
 import com.finflow.admin.dto.DecisionRequest;
 import com.finflow.admin.dto.DecisionResponse;
 import com.finflow.admin.entity.Decision;
@@ -25,14 +25,14 @@ import java.util.stream.Collectors;
 public class AdminService {
 
     private final DecisionRepository decisionRepository;
-    private final DecisionMapper mapper;
+    private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
 
-    @Value("${application.service.url}")
-    private String applicationServiceUrl;
+//    @Value("${application.service.url}")
+    private String applicationServiceUrl = "http://application-service";
 
-    @Value("${document.service.url}")
-    private String documentServiceUrl;
+//    @Value("${document.service.url}")
+    private String documentServiceUrl = "http://document-service";
 
     // ─────────────────────────────────────────────────────────────
     // GET ALL APPLICATIONS — Fetch all non-draft applications
@@ -79,7 +79,7 @@ public class AdminService {
                 "/status?status=" + request.getDecision();
         restTemplate.put(statusUrl, null);
 
-        return mapper.toResponse(saved);
+        return modelMapper.map(saved, DecisionResponse.class);
     }
 
     // ─────────────────────────────────────────────────────────────

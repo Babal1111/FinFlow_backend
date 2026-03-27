@@ -1,11 +1,10 @@
 com\finflow\admin\AdminServiceApplication.class
 com\finflow\admin\controller\AdminController.class
 com\finflow\admin\dto\DecisionResponse.class
-com\finflow\admin\dto\DecisionMapperImpl.class
 com\finflow\admin\repository\DecisionRepository.class
-com\finflow\admin\dto\DecisionMapper.class
 com\finflow\admin\entity\Decision.class
 com\finflow\admin\dto\DecisionRequest.class
 com\finflow\admin\exception\GlobalExceptionHandler.class
 com\finflow\admin\service\AdminService.class
+com\finflow\admin\config\ModelMapperConfig.class
 com\finflow\admin\config\RestTemplateConfig.class

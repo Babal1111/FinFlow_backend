@@ -1,5 +1,7 @@
 package com.finflow.auth.service;
 
+import org.modelmapper.ModelMapper;
+
 import com.finflow.auth.dto.AuthResponse;
 import com.finflow.auth.dto.LoginRequest;
 import com.finflow.auth.dto.SignupRequest;
@@ -28,6 +30,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final ModelMapper modelMapper;
 
     // SIGNUP
     public AuthResponse signup(SignupRequest request) {
@@ -36,9 +39,7 @@ public class AuthService {
             throw new RuntimeException("Email already registered");
         }
 
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
+        User user = modelMapper.map(request, User.class);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         if (request.getRole() != null && request.getRole().equalsIgnoreCase("ADMIN")) {
