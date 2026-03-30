@@ -1,23 +1,19 @@
 package com.finflow.admin.service;
 
-import org.modelmapper.ModelMapper;
+import com.finflow.admin.client.ApplicationServiceClient;
+import com.finflow.admin.client.DocumentServiceClient;
 import com.finflow.admin.dto.DecisionRequest;
 import com.finflow.admin.dto.DecisionResponse;
 import com.finflow.admin.entity.Decision;
 import com.finflow.admin.repository.DecisionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,27 +22,14 @@ public class AdminService {
 
     private final DecisionRepository decisionRepository;
     private final ModelMapper modelMapper;
-    private final RestTemplate restTemplate;
-
-//    @Value("${application.service.url}")
-    private String applicationServiceUrl = "http://application-service";
-
-//    @Value("${document.service.url}")
-    private String documentServiceUrl = "http://document-service";
+    private final ApplicationServiceClient applicationServiceClient;
+    private final DocumentServiceClient documentServiceClient;
 
     // ─────────────────────────────────────────────────────────────
     // GET ALL APPLICATIONS — Fetch all non-draft applications
     // ─────────────────────────────────────────────────────────────
     public List<?> getAllApplications() {
-        String url = applicationServiceUrl + "/applications/all";
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-Role", "ADMIN");
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        org.springframework.http.ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
-        List<?> applications = response.getBody();
-
+        List<?> applications = applicationServiceClient.getAllApplications("ADMIN");
         log.info("Fetched {} applications",
                 applications != null ? applications.size() : 0);
         return applications;
@@ -80,35 +63,23 @@ public class AdminService {
         log.info("Decision {} made for application {}",
                 request.getDecision(), applicationId);
 
-        // Update application status via REST call
-        String statusUrl = applicationServiceUrl +
-                "/applications/" + applicationId +
-                "/status?status=" + request.getDecision();
-        restTemplate.put(statusUrl, null);
+        // Update application status via Feign client
+        applicationServiceClient.updateStatus(applicationId, request.getDecision(), "ADMIN");
 
         return modelMapper.map(saved, DecisionResponse.class);
     }
 
     // ─────────────────────────────────────────────────────────────
-    // VERIFY DOCUMENT — Delegate to Document Service
+    // VERIFY DOCUMENT — Delegate to Document Service via Feign
     // ─────────────────────────────────────────────────────────────
     public Object verifyDocument(Long documentId,
                                boolean approved,
                                Long adminId) {
 
-        String url = documentServiceUrl +
-                "/documents/" + documentId +
-                "/verify?approved=" + approved;
-
-        // Pass adminId as header to Document Service
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-Id", adminId.toString());
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        org.springframework.http.ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.PUT, entity, Object.class);
+        Object result = documentServiceClient.verifyDocument(documentId, approved, adminId);
         log.info("Document {} {}", documentId,
                 approved ? "verified" : "rejected");
-        return response.getBody();
+        return result;
     }
 
     // ─────────────────────────────────────────────────────────────

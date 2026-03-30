@@ -40,18 +40,15 @@ public class JwtFilter implements GlobalFilter, Ordered {
 
         String path = exchange.getRequest().getPath().toString();
 
-        // Step 1: Open route hai toh seedha aage bhejo
         if (isOpenRoute(path)) {
             return chain.filter(exchange);
         }
 
-        // Step 2: Authorization header check karo
         String authHeader = exchange.getRequest()
                 .getHeaders()
                 .getFirst("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            // Token nahi hai → 401 return karo
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
@@ -75,10 +72,9 @@ public class JwtFilter implements GlobalFilter, Ordered {
                             .header("X-User-Role", claims.get("role").toString())
                             .build())
                     .build();
-//            The .header() method in Spring WebFlux appends to existing headers, it does not replace them.
+//
 //            So if you send X-User-Role: ADMIN from Postman, and the Gateway also
 //            adds X-User-Role: APPLICANT from your JWT, the downstream service receives both values.
-//             When it calls request.getHeader("X-User-Role") it gets the first one — which is your manually injected ADMIN.
             return chain.filter(modifiedExchange);
 
         } catch (Exception e) {

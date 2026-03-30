@@ -44,14 +44,14 @@ public class JwtUtil {
     }
 
     // ───────────── REFRESH TOKEN ─────────────
-    public String generateRefreshToken(User user) {
-        return Jwts.builder()
-                .setSubject(user.getEmail()) // minimal data for security
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
-    }
+//    public String generateRefreshToken(User user) {
+//        return Jwts.builder()
+//                .setSubject(user.getEmail()) // minimal data for security
+//                .setIssuedAt(new Date())
+//                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration))
+//                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+//                .compact();
+//    }
 
     // ───────────── COMMON METHODS ─────────────
     public String extractEmail(String token) {

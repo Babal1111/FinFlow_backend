@@ -37,7 +37,7 @@ public class DocumentController {
     // GET /documents/application/{applicationId}
     @GetMapping("/application/{applicationId}")
     public ResponseEntity<List<DocumentResponse>> getByApplication(
-            @PathVariable Long applicationId) {
+            @PathVariable("applicationId") Long applicationId) {
 
         List<DocumentResponse> responses =
                 documentService.getByApplicationId(applicationId);
@@ -47,9 +47,11 @@ public class DocumentController {
     // PUT /documents/{id}/verify
     @PutMapping("/{id}/verify")
     public ResponseEntity<DocumentResponse> verify(
-            @PathVariable Long id,
-            @RequestParam boolean approved,
-            @RequestHeader("X-User-Id") Long adminId) {
+            @PathVariable("id") Long id,
+            @RequestParam("approved") boolean approved,
+            @RequestHeader("X-User-Id") Long adminId,
+
+            @RequestHeader("X-User-Role") String role) {
 
         log.info("Verify request for document id: {}", id);
         DocumentResponse response = documentService.verify(id, adminId, approved);

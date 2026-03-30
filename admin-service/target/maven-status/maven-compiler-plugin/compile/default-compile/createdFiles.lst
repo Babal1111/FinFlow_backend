@@ -7,4 +7,3 @@ com\finflow\admin\dto\DecisionRequest.class
 com\finflow\admin\exception\GlobalExceptionHandler.class
 com\finflow\admin\service\AdminService.class
 com\finflow\admin\config\ModelMapperConfig.class
-com\finflow\admin\config\RestTemplateConfig.class

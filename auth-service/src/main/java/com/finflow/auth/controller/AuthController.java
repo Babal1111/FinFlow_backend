@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -47,10 +46,5 @@ public class AuthController {
     @GetMapping("/test")
     public String test() {
         return "JWT working";
-    }
-
-    @PostMapping("/refresh")
-    public AuthResponse refresh(@RequestBody Map<String, String> request) {
-        return authService.refreshToken(request.get("refreshToken"));
     }
 }

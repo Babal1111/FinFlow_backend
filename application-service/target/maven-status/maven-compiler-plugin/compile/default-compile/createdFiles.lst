@@ -1,11 +1,11 @@
 com\finflow\application\dto\StatusResponse.class
-com\finflow\application\entity\ApplicationStatus.class
 com\finflow\application\dto\ApplicationRequest.class
 com\finflow\application\exception\GlobalExceptionHandler.class
 com\finflow\application\ApplicationServiceApplication.class
 com\finflow\application\config\ModelMapperConfig.class
-com\finflow\application\repository\ApplicationRepository.class
 com\finflow\application\controller\ApplicationController.class
-com\finflow\application\service\ApplicationService.class
 com\finflow\application\dto\ApplicationResponse.class
+com\finflow\application\entity\ApplicationStatus.class
+com\finflow\application\repository\ApplicationRepository.class
+com\finflow\application\service\ApplicationService.class
 com\finflow\application\entity\LoanApplication.class

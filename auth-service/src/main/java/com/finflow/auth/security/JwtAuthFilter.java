@@ -34,6 +34,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (path.startsWith("/auth")) {
             filterChain.doFilter(request, response);
+            //directly goin to auth controller
             return;
         }
 
@@ -43,7 +44,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
+//f bad, pass through (Spring Security will reject it).
         String token = authHeader.substring(7);
 
         if (!jwtUtil.isTokenValid(token)) {

@@ -3,6 +3,7 @@ package com.finflow.application.controller;
 import com.finflow.application.dto.ApplicationRequest;
 import com.finflow.application.dto.ApplicationResponse;
 import com.finflow.application.dto.StatusResponse;
+import com.finflow.application.dto.SubmitResponse;
 import com.finflow.application.entity.ApplicationStatus;
 import com.finflow.application.service.ApplicationService;
 import jakarta.validation.Valid;
@@ -47,13 +48,20 @@ public class ApplicationController {
 
 
     @PostMapping("/{id}/submit")
-    public ResponseEntity<Void> submit(
+    public ResponseEntity<SubmitResponse> submit(
             @PathVariable Long id,
             @RequestHeader("X-User-Id") Long userId) {
 
         log.info("Submit application request for id: {}", id);
-        applicationService.submit(id, userId);
-        return ResponseEntity.ok().build();
+        ApplicationResponse response = applicationService.submit(id, userId);
+
+        SubmitResponse submitResponse = new SubmitResponse(
+                "Application submitted successfully! We will review your application shortly.",
+                response.getId(),
+                response.getStatus(),
+                response.getSubmittedAt()
+        );
+        return ResponseEntity.ok(submitResponse);
     }
 
 

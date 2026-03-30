@@ -63,7 +63,7 @@ public class ApplicationService {
 
 
     @Transactional
-    public void submit(Long id, Long userId) {
+    public ApplicationResponse submit(Long id, Long userId) {
         LoanApplication application = getApplicationByIdAndUserId(id, userId);
         if (application.getStatus() != ApplicationStatus.DRAFT) {
             throw new RuntimeException(
@@ -76,12 +76,13 @@ public class ApplicationService {
                     "Please fill all required details before submitting!");
         }
 
-
         application.setStatus(ApplicationStatus.SUBMITTED);
         application.setSubmittedAt(LocalDateTime.now());
 
-        applicationRepository.save(application);
+        LoanApplication saved = applicationRepository.save(application);
         log.info("Application submitted with id: {}", id);
+
+        return modelMapper.map(saved, ApplicationResponse.class);
     }
 
 
