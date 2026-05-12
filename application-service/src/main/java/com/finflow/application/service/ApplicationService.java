@@ -9,12 +9,17 @@ import com.finflow.application.entity.LoanApplication;
 import com.finflow.application.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -24,15 +29,12 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final ModelMapper modelMapper;
 
+    // Valid status transitions state machine
+
+
     public ApplicationResponse create(ApplicationRequest request, Long userId) {
-
-
         LoanApplication application = modelMapper.map(request, LoanApplication.class);
-
-
         application.setUserId(userId);
-
-
         LoanApplication saved = applicationRepository.save(application);
         log.info("Application created with id: {}", saved.getId());
 
@@ -110,9 +112,23 @@ public class ApplicationService {
                 .orElseThrow(() ->
                         new RuntimeException("Application not found!"));
 
+        ApplicationStatus currentStatus = application.getStatus();
+
         application.setStatus(newStatus);
         applicationRepository.save(application);
-        log.info("Application {} status updated to {}", id, newStatus);
+        log.info("Application {} status updated: {} → {}", id, currentStatus, newStatus);
+    }
+
+    @Transactional
+    public void submitDocs(Long id, Long userId) {
+        LoanApplication application = getApplicationByIdAndUserId(id, userId);
+        updateStatus(id, ApplicationStatus.DOCS_PENDING);
+    }
+
+    public ApplicationResponse getById(Long id) {
+        LoanApplication application = applicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Application not found!"));
+        return modelMapper.map(application, ApplicationResponse.class);
     }
 
 
@@ -127,11 +143,19 @@ public class ApplicationService {
 
         return application;
     }
-    public List<ApplicationResponse> getAllApplications() {
-        return applicationRepository.findAll()
-                .stream()
-                .filter(app -> app.getStatus() != ApplicationStatus.DRAFT) // exclude drafts
-                .map(app -> modelMapper.map(app, ApplicationResponse.class))
-                .collect(Collectors.toList());
+//    public List<ApplicationResponse> getAllApplications() {
+//        return applicationRepository.findAll()
+//                .stream()
+//                .filter(app -> app.getStatus() != ApplicationStatus.DRAFT) // exclude drafts
+//                .map(app -> modelMapper.map(app, ApplicationResponse.class))
+//                .collect(Collectors.toList());
+//    }
+    public Page<ApplicationResponse> getAllApplications(Pageable pageable) {
+
+        Page<LoanApplication> pagedApps = applicationRepository.findAllByStatusNot(ApplicationStatus.DRAFT, pageable);
+
+        return pagedApps.map(app -> modelMapper.map(app, ApplicationResponse.class));
+
+
     }
 }

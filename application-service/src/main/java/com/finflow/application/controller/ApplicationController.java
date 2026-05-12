@@ -9,6 +9,9 @@ import com.finflow.application.service.ApplicationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,6 +67,22 @@ public class ApplicationController {
         return ResponseEntity.ok(submitResponse);
     }
 
+    @PostMapping("/{id}/submit-docs")
+    public ResponseEntity<Void> submitDocs(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") Long userId) {
+
+        log.info("Submit docs application request for id: {}", id);
+        applicationService.submitDocs(id, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApplicationResponse> getById(@PathVariable Long id) {
+        log.info("Get application by id: {}", id);
+        return ResponseEntity.ok(applicationService.getById(id));
+    }
+
 
     @GetMapping("/my")
     public ResponseEntity<List<ApplicationResponse>> getMyApplications(
@@ -74,7 +93,6 @@ public class ApplicationController {
                 applicationService.getMyApplications(userId);
         return ResponseEntity.ok(responses);
     }
-
 
     @GetMapping("/{id}/status")
     public ResponseEntity<StatusResponse> getStatus(
@@ -102,15 +120,34 @@ public class ApplicationController {
         return ResponseEntity.ok().build();
     }
 
+//    @GetMapping("/all")
+//    public ResponseEntity<List<ApplicationResponse>> getAllApplications(
+//            @RequestHeader("X-User-Role") String role) {
+//
+//        if (!role.equals("ADMIN")) {
+//            throw new RuntimeException("Access denied!");
+//        }
+//
+//        log.info("Fetch all applications for admin");
+//        return ResponseEntity.ok(applicationService.getAllApplications());
+//    }
     @GetMapping("/all")
-    public ResponseEntity<List<ApplicationResponse>> getAllApplications(
-            @RequestHeader("X-User-Role") String role) {
+    public ResponseEntity<Page<ApplicationResponse>> getAllApplications(
+        @RequestHeader("X-User-Role") String role,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+        ) {
 
         if (!role.equals("ADMIN")) {
-            throw new RuntimeException("Access denied!");
+        throw new RuntimeException("Access denied!");
         }
 
+        Pageable pageable = PageRequest.of(page, size);
+        //pagebal is an interface which tells which page to get
+
         log.info("Fetch all applications for admin");
-        return ResponseEntity.ok(applicationService.getAllApplications());
+        return ResponseEntity.ok(applicationService.getAllApplications(pageable));
     }
+
+
 }

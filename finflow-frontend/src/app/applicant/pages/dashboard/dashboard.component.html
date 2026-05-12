@@ -1,0 +1,89 @@
+<main class="dashboard-content">
+  <div class="content-container">
+    <!-- Greeting & Action -->
+    <section class="greeting-row">
+      <div class="greeting-text">
+        <span class="eyebrow">YOUR ACCOUNT</span>
+        <h1 class="title">Good day, {{ firstName }}.</h1>
+        <p class="subtitle">Here's where your applications stand.</p>
+      </div>
+      <div class="greeting-actions">
+        <a routerLink="/applicant/apply" class="btn-new-app">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v8M8 12h8" />
+          </svg>
+          New application
+        </a>
+      </div>
+    </section>
+
+    <!-- Stats Row -->
+    <section class="stats-row" *ngIf="!loading">
+      <div class="stat-card">
+        <span class="stat-label">OPEN APPLICATIONS</span>
+        <span class="stat-value">{{ pendingCount }}</span>
+      </div>
+      <div class="stat-card border-x">
+        <span class="stat-label">TOTAL REQUESTED</span>
+        <span class="stat-value">₹{{ totalAmount | number }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">APPROVED</span>
+        <span class="stat-value">{{ approvedCount }}</span>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Synchronizing your records...</p>
+    </div>
+
+    <!-- Applications List -->
+    <section class="applications-section" *ngIf="!loading">
+      <div class="section-header">
+        <h2 class="section-title">Applications</h2>
+        <span class="section-meta">{{ applications.length }} total</span>
+      </div>
+
+      <div class="applications-list">
+        <!-- Empty State -->
+        <div *ngIf="applications.length === 0" class="empty-state">
+          <p>No applications found in your account.</p>
+          <a routerLink="/applicant/apply" class="link">Start your first application →</a>
+        </div>
+
+        <!-- List Items -->
+        <div *ngFor="let app of applications" class="application-item">
+          <div class="item-main">
+            <div class="status-row">
+              <span class="status-badge" [attr.data-status]="app.status">
+                <span class="dot"></span>
+                {{ app.status | titlecase }}
+              </span>
+              <span class="item-id">{{ app.id }}</span>
+            </div>
+            <h3 class="item-purpose">{{ app.purpose || 'Loan application (untitled)' }}</h3>
+            <p class="item-dates">
+              Started {{ app.createdAt | date:'d MMM yyyy' }}
+              <span *ngIf="app.submittedAt"> · Submitted {{ app.submittedAt | date:'d MMM yyyy' }}</span>
+            </p>
+          </div>
+          
+          <div class="item-aside">
+            <div class="amount-group">
+              <span class="amount-label">AMOUNT</span>
+              <span class="amount-value">{{ app.loanAmount ? ('₹' + (app.loanAmount | number)) : '—' }}</span>
+            </div>
+            <a [routerLink]="['/applicant/status', app.id]" class="item-arrow">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>

@@ -17,4 +17,5 @@ public class DocumentResponse {
     private DocumentStatus status;
     private LocalDateTime uploadedAt;
     private LocalDateTime verifiedAt;
+    private boolean allDocsVerified;
 }

@@ -1,0 +1,66 @@
+<div class="admin-page">
+  <div class="admin-container">
+
+    <div class="admin-header">
+      <div class="header-info">
+        <span class="eyebrow">ADMINISTRATION</span>
+        <h1 class="title">User Management</h1>
+        <p class="subtitle">Manage all registered users and their roles within the system.</p>
+      </div>
+    </div>
+
+    <!-- User List Card -->
+    <div class="admin-card">
+      
+      <!-- Loading State -->
+      <div *ngIf="loading" class="state-container">
+        <div class="spinner"></div>
+        <p>Fetching user directory...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error" class="state-container">
+        <div class="error-box">
+          <p>{{ error }}</p>
+        </div>
+        <button (click)="loadUsers()" class="retry-btn">Retry Connection</button>
+      </div>
+
+      <!-- Data Table -->
+      <div class="table-wrapper" *ngIf="!loading && !error">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Full Name</th>
+              <th>Email Address</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td class="id-cell">#{{ user.id | number:'3.0-0' }}</td>
+              <td>
+                <div class="user-info">
+                  <div class="avatar">{{ user.name?.charAt(0) || 'U' }}</div>
+                  <span class="name-text">{{ user.name }}</span>
+                </div>
+              </td>
+              <td class="email-text">{{ user.email }}</td>
+              <td>
+                <span class="role-tag" [class.admin]="user.role === 'ADMIN'">
+                  {{ user.role }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Empty State -->
+        <div *ngIf="users.length === 0" class="empty-text">
+          <p>No users found in the system.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

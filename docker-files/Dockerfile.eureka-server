@@ -1,0 +1,35 @@
+# ===== Stage 1: Build =====
+FROM maven:3.9-eclipse-temurin-17-alpine AS build
+WORKDIR /app
+
+# Copy parent pom first (shared dependency management)
+COPY pom.xml .
+COPY eureka-server/pom.xml eureka-server/
+COPY config-server/pom.xml config-server/
+COPY auth-service/pom.xml auth-service/
+COPY application-service/pom.xml application-service/
+COPY document-service/pom.xml document-service/
+COPY admin-service/pom.xml admin-service/
+COPY api-gateway/pom.xml api-gateway/
+COPY notification-service/pom.xml notification-service/
+COPY payment-service/pom.xml payment-service/
+
+RUN mvn dependency:go-offline -pl eureka-server -am -q
+
+COPY eureka-server/src eureka-server/src
+
+# Build the JAR
+RUN mvn package -pl eureka-server -am -DskipTests -q -Dstart-class=com.example.FinFlow.eureka_server.EurekaServerApplication
+
+# ===== Stage 2: Runtime =====
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+RUN addgroup -S finflow && adduser -S finflow -G finflow
+USER finflow
+
+COPY --from=build /app/eureka-server/target/*.jar app.jar
+
+EXPOSE 8761
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

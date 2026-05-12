@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import java.util.List;
 import java.util.Map;
 
@@ -72,25 +74,26 @@ class AdminServiceTest {
     // ─── getAllApplications ────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("getAllApplications: should return list from application-service via Feign")
-    void getAllApplications_shouldReturnList() {
-        List<?> mockApps = List.of(Map.of("id", 1), Map.of("id", 2));
-        // doReturn() bypasses Java generic type-check for List<?> wildcard
-        doReturn(mockApps).when(applicationServiceClient).getAllApplications("ADMIN");
+    @DisplayName("getAllApplications: should return page from application-service via Feign")
+    void getAllApplications_shouldReturnPage() {
+        List<Map<String, Object>> mockAppsList = List.of(Map.of("id", 1), Map.of("id", 2));
+        Page<Map<String, Object>> mockPage = new PageImpl<>(mockAppsList);
 
-        List<?> results = adminService.getAllApplications();
+        doReturn(mockPage).when(applicationServiceClient).getAllApplications("ADMIN", 0, 10);
+
+        Page<?> results = adminService.getAllApplications(0, 10);
 
         assertNotNull(results);
-        assertEquals(2, results.size());
-        verify(applicationServiceClient).getAllApplications("ADMIN");
+        assertEquals(2, results.getContent().size());
+        verify(applicationServiceClient).getAllApplications("ADMIN", 0, 10);
     }
 
     @Test
     @DisplayName("getAllApplications: should handle null response gracefully")
     void getAllApplications_shouldHandleNullBody() {
-        doReturn(null).when(applicationServiceClient).getAllApplications("ADMIN");
+        doReturn(null).when(applicationServiceClient).getAllApplications("ADMIN", 0, 10);
 
-        List<?> results = adminService.getAllApplications();
+        Page<?> results = adminService.getAllApplications(0, 10);
 
         assertNull(results);
     }
@@ -133,22 +136,22 @@ class AdminServiceTest {
     @DisplayName("verifyDocument: should delegate to document-service via Feign and return response")
     void verifyDocument_shouldDelegateToDocumentService() {
         Map<String, Object> mockDocResponse = Map.of("id", 1, "status", "VERIFIED");
-        when(documentServiceClient.verifyDocument(1L, true, 5L)).thenReturn(mockDocResponse);
+        when(documentServiceClient.verifyDocument(1L, true, 5L, "ADMIN")).thenReturn(mockDocResponse);
 
         Object result = adminService.verifyDocument(1L, true, 5L);
 
         assertNotNull(result);
-        verify(documentServiceClient).verifyDocument(1L, true, 5L);
+        verify(documentServiceClient).verifyDocument(1L, true, 5L, "ADMIN");
     }
 
     @Test
     @DisplayName("verifyDocument: should pass correct adminId to Feign client")
     void verifyDocument_shouldPassAdminIdToFeignClient() {
-        when(documentServiceClient.verifyDocument(2L, false, 7L)).thenReturn(Map.of());
+        when(documentServiceClient.verifyDocument(2L, false, 7L, "ADMIN")).thenReturn(Map.of());
 
         adminService.verifyDocument(2L, false, 7L);
 
-        verify(documentServiceClient).verifyDocument(2L, false, 7L);
+        verify(documentServiceClient).verifyDocument(2L, false, 7L, "ADMIN");
     }
 
     // ─── getReports ───────────────────────────────────────────────────────────

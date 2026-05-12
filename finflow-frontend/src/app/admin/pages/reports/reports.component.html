@@ -1,0 +1,71 @@
+<div class="admin-page">
+  <div class="admin-container">
+
+    <div class="admin-header">
+      <div class="header-info">
+        <span class="eyebrow">SYSTEM INSIGHTS</span>
+        <h1 class="title">Reports & Analytics</h1>
+        <p class="subtitle">Overview of loan processing performance and statistics.</p>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row" *ngIf="reports">
+      <div class="stat-card">
+        <span class="card-label">TOTAL DECISIONS</span>
+        <span class="card-value">{{ reports.totalDecisions }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="card-label">TOTAL APPROVED</span>
+        <span class="card-value success">{{ reports.approved }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="card-label">TOTAL REJECTED</span>
+        <span class="card-value danger">{{ reports.rejected }}</span>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid" *ngIf="reports">
+      
+      <!-- Chart: Decision Outcomes -->
+      <div class="admin-card chart-card">
+        <h2 class="card-title">Decision Outcomes</h2>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="barChartData"
+            [options]="barChartOptions"
+            [type]="barChartType">
+          </canvas>
+        </div>
+        <div class="chart-footer">
+          <span>Success vs Denial distribution</span>
+        </div>
+      </div>
+
+      <!-- Chart: Approval Rate -->
+      <div class="admin-card chart-card">
+        <h2 class="card-title">Approval Rate</h2>
+        <div class="chart-container doughnut-wrapper">
+          <canvas baseChart
+            [data]="doughnutChartData"
+            [options]="doughnutChartOptions"
+            [type]="doughnutChartType">
+          </canvas>
+          <div class="doughnut-center">
+            <span class="center-value">{{ reports.approvalRate }}</span>
+            <span class="center-label">APPROVED</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="!reports" class="admin-card loading-card">
+      <div class="spinner"></div>
+      <p>Aggregating system data...</p>
+    </div>
+
+  </div>
+</div>

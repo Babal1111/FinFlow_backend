@@ -1,0 +1,35 @@
+.detail-grid {
+  @apply grid grid-cols-2 gap-y-6 gap-x-12;
+}
+
+.detail-label {
+  @apply text-[10px] font-bold text-bank-gray-400 uppercase tracking-wider mb-1 block;
+}
+
+.detail-value {
+  @apply text-base font-medium text-bank-navy;
+}
+
+.doc-verification-card {
+  @apply bg-[#FAF9F6] border border-bank-border p-6 mb-4 rounded-sm flex items-center justify-between;
+}
+
+.btn-verify {
+  @apply bg-bank-emerald text-white px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-wider hover:bg-[#059669] disabled:opacity-50;
+}
+
+.btn-reject {
+  @apply bg-bank-rose text-white px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-wider hover:bg-[#DC2626] disabled:opacity-50;
+}
+
+.decision-sidebar {
+  @apply sticky top-24;
+}
+
+.input-banking {
+  @apply w-full border border-bank-border p-3 text-sm rounded-sm outline-none focus:border-bank-navy;
+}
+
+.select-banking {
+  @apply w-full border border-bank-border p-3 text-sm rounded-sm outline-none appearance-none bg-white focus:border-bank-navy;
+}

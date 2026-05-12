@@ -6,6 +6,7 @@ import com.finflow.admin.service.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,20 +21,30 @@ public class AdminController {
 
     private final AdminService adminService;
 
-
     // GET /admin/applications
     // Fetch all non-draft applications for admin review
 
-    @GetMapping("/applications")
-    public ResponseEntity<List<?>> getAllApplications(
-            @RequestHeader("X-User-Role") String role) {
+    // @GetMapping("/applications")
+    // public ResponseEntity<List<?>> getAllApplications(
+    // @RequestHeader("X-User-Role") String role) {
+    //
+    // if (!role.equals("ADMIN")) {
+    // throw new RuntimeException("Access denied!");
+    // }
+    //
+    // log.info("Fetch all applications request");
+    // return ResponseEntity.ok(adminService.getAllApplications());
+    // }
 
+    @GetMapping("/applications/all")
+    public ResponseEntity<Page<?>> getAllApplications(
+            @RequestHeader("X-User-Role") String role,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         if (!role.equals("ADMIN")) {
             throw new RuntimeException("Access denied!");
         }
-
-        log.info("Fetch all applications request");
-        return ResponseEntity.ok(adminService.getAllApplications());
+        return ResponseEntity.ok(adminService.getAllApplications(page, size));
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -90,5 +101,21 @@ public class AdminController {
 
         log.info("Reports request");
         return ResponseEntity.ok(adminService.getReports());
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // GET /admin/users
+    // Get all registered users
+    // ─────────────────────────────────────────────────────────────
+    @GetMapping("/users")
+    public ResponseEntity<List<Map<String, Object>>> getAllUsers(
+            @RequestHeader("X-User-Role") String role) {
+
+        if (!role.equals("ADMIN")) {
+            throw new RuntimeException("Access denied!");
+        }
+
+        log.info("Get all users request");
+        return ResponseEntity.ok(adminService.getAllUsers());
     }
 }

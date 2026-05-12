@@ -1,0 +1,29 @@
+# Maven/Java
+target/
+*.jar
+*.war
+*.ear
+
+# SonarQube
+sonarqube-*/
+sonarqube-*.zip
+
+# Node/Angular
+node_modules/
+dist/
+.angular/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Docker
+.dockerignore
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Uploads
+uploads/

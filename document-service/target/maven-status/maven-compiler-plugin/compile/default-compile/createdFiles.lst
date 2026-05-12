@@ -1,11 +1,15 @@
 com\finflow\document\service\DocumentService.class
+com\finflow\document\client\AuthServiceClient.class
 com\finflow\document\dto\DocumentResponse.class
 com\finflow\document\DocumentServiceApplication.class
-com\finflow\document\config\ModelMapperConfig.class
 com\finflow\document\controller\DocumentController.class
 com\finflow\document\repository\DocumentRepository.class
-com\finflow\document\entity\Document.class
+com\finflow\common\event\NotificationEvent.class
 com\finflow\document\entity\DocumentStatus.class
 com\finflow\document\dto\DocumentRequest.class
+com\finflow\document\config\RabbitMQConfig.class
+com\finflow\common\event\NotificationEvent$NotificationEventBuilder.class
+com\finflow\document\config\ModelMapperConfig.class
+com\finflow\document\entity\Document.class
 com\finflow\document\entity\DocumentType.class
 com\finflow\document\exception\GlobalExceptionHandler.class

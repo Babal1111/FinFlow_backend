@@ -1,0 +1,223 @@
+<div class="apply-page">
+  <div class="apply-container">
+    
+    <!-- Header Section -->
+    <div class="apply-header">
+      <div class="header-left">
+        <span class="eyebrow">LOAN APPLICATION</span>
+        <h1 class="main-title">Tell us your story.</h1>
+      </div>
+      <div class="header-right">
+        <span class="save-status">Draft Status</span>
+      </div>
+    </div>
+
+    <!-- Stepper Section -->
+    <div class="apply-stepper">
+      <div *ngFor="let step of ['PERSONAL', 'EMPLOYMENT', 'LOAN DETAILS', 'DOCUMENTS', 'REVIEW']; let i = index" class="step-wrapper">
+        <div class="step-item" [class.active]="currentStep === i + 1" [class.completed]="currentStep > i + 1">
+          <div class="step-marker">
+            <span *ngIf="currentStep <= i + 1">{{ i + 1 }}</span>
+            <svg *ngIf="currentStep > i + 1" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
+              <path d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <span class="step-label">{{ step }}</span>
+        </div>
+        <div *ngIf="i < 4" class="step-line"></div>
+      </div>
+    </div>
+
+    <!-- Global Error Alert -->
+    <div class="error-alert" *ngIf="errorMessage">
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <!-- Main Wizard Card -->
+    <div class="wizard-card interactive-luxe">
+      <form [formGroup]="form">
+        
+        <!-- Step 1: Personal Details -->
+        <section *ngIf="currentStep === 1">
+          <h2 class="card-section-title">Personal details</h2>
+          <div class="form-grid">
+            <div class="form-group" [class.has-error]="form.get('firstName')?.touched && form.get('firstName')?.invalid">
+              <label>First name</label>
+              <input type="text" formControlName="firstName" placeholder="e.g. John">
+              <span class="error-msg" *ngIf="form.get('firstName')?.touched && form.get('firstName')?.invalid">Required</span>
+            </div>
+            <div class="form-group" [class.has-error]="form.get('lastName')?.touched && form.get('lastName')?.invalid">
+              <label>Last name</label>
+              <input type="text" formControlName="lastName" placeholder="e.g. Doe">
+              <span class="error-msg" *ngIf="form.get('lastName')?.touched && form.get('lastName')?.invalid">Required</span>
+            </div>
+            <div class="form-group" [class.has-error]="form.get('phone')?.touched && form.get('phone')?.invalid">
+              <label>Phone number</label>
+              <input type="text" formControlName="phone" placeholder="e.g. 9876543210">
+              <span class="error-msg" *ngIf="form.get('phone')?.touched && form.get('phone')?.invalid">Required</span>
+            </div>
+            <div class="form-group full-width" [class.has-error]="form.get('address')?.touched && form.get('address')?.invalid">
+              <label>Residential address</label>
+              <textarea formControlName="address" placeholder="Enter your full address..."></textarea>
+              <span class="error-msg" *ngIf="form.get('address')?.touched && form.get('address')?.invalid">Address is required</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 2: Employment -->
+        <section *ngIf="currentStep === 2">
+          <h2 class="card-section-title">Employment info</h2>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>Employer Name</label>
+              <input type="text" formControlName="employerName" placeholder="Company Name">
+            </div>
+            <div class="form-group">
+              <label>Employment Type</label>
+              <select formControlName="employmentType">
+                <option value="SALARIED">Salaried</option>
+                <option value="SELF_EMPLOYED">Self Employed</option>
+                <option value="BUSINESS">Business</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Monthly Income (₹)</label>
+              <input type="number" formControlName="monthlyIncome">
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3: Loan Details -->
+        <section *ngIf="currentStep === 3">
+          <h2 class="card-section-title">Loan requirements</h2>
+          <div class="form-grid">
+            <div class="form-group" [class.has-error]="form.get('loanAmount')?.touched && form.get('loanAmount')?.invalid">
+              <label>Loan Amount (₹)</label>
+              <input type="number" formControlName="loanAmount">
+              <span class="error-msg" *ngIf="form.get('loanAmount')?.touched && form.get('loanAmount')?.invalid">Min ₹1,000 required</span>
+            </div>
+            <div class="form-group">
+              <label>Tenure (Months)</label>
+              <select formControlName="tenureMonths">
+                <option [value]="12">12 Months</option>
+                <option [value]="24">24 Months</option>
+                <option [value]="36">36 Months</option>
+                <option [value]="48">48 Months</option>
+                <option [value]="60">60 Months</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label>Purpose</label>
+              <input type="text" formControlName="purpose" placeholder="e.g. Home Renovation">
+            </div>
+          </div>
+          
+          <div class="calculation-summary">
+            <div class="summary-item">
+              <label>INTEREST RATE</label>
+              <span class="value">{{ interestRate }}% P.A.</span>
+            </div>
+            <div class="summary-item">
+              <label>MONTHLY EMI</label>
+              <span class="value gold">₹{{ monthlyEmi | number:'1.0-0' }}</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 4: Documents -->
+        <section *ngIf="currentStep === 4">
+          <h2 class="card-section-title">Documents</h2>
+          <p class="section-desc">Please upload required documents to proceed to review.</p>
+          <div class="doc-upload-list">
+            <div *ngFor="let doc of ['AADHAAR', 'PAN_CARD', 'SALARY_SLIP', 'BANK_STATEMENT']" class="doc-row">
+              <div class="doc-label">{{ doc.replace('_', ' ') }}</div>
+              <div class="doc-upload-box">
+                <input type="file" (change)="onFileSelected($event, doc)" class="hidden-input" [id]="doc">
+                <label [for]="doc" class="upload-trigger">
+                  {{ selectedFiles[doc] ? selectedFiles[doc].name : 'Choose file...' }}
+                </label>
+                <span *ngIf="selectedFiles[doc]" class="check">✓</span>
+              </div>
+            </div>
+          </div>
+          <div class="field-error mt-4" *ngIf="currentStep === 4 && !selectedFiles['AADHAAR']">
+            <span>Aadhaar card is mandatory to proceed.</span>
+          </div>
+        </section>
+
+        <!-- Step 5: Review -->
+        <section *ngIf="currentStep === 5">
+          <h2 class="card-section-title">Final review</h2>
+          <div class="review-list">
+            <div class="review-block">
+              <div class="block-header">
+                <h3>Personal Information</h3>
+                <button (click)="goToStep(1)">Edit</button>
+              </div>
+              <p>{{ form.value.firstName }} {{ form.value.lastName }}</p>
+              <p>{{ form.value.phone }}</p>
+              <p class="small">{{ form.value.address }}</p>
+            </div>
+            <div class="review-block">
+              <div class="block-header">
+                <h3>Employment & Income</h3>
+                <button (click)="goToStep(2)">Edit</button>
+              </div>
+              <p>{{ form.value.employerName || 'Not specified' }} ({{ form.value.employmentType }})</p>
+              <p>Monthly Income: ₹{{ form.value.monthlyIncome | number }}</p>
+            </div>
+            <div class="review-block">
+              <div class="block-header">
+                <h3>Loan Details</h3>
+                <button (click)="goToStep(3)">Edit</button>
+              </div>
+              <p>Amount: ₹{{ form.value.loanAmount | number }}</p>
+              <p>EMI: ₹{{ monthlyEmi | number:'1.0-0' }} &#64; {{ interestRate }}% P.A.</p>
+              <p class="small">Tenure: {{ form.value.tenureMonths }} Months</p>
+            </div>
+            <div class="review-block">
+              <div class="block-header">
+                <h3>Documents</h3>
+                <button (click)="goToStep(4)">Edit</button>
+              </div>
+              <div class="review-docs-inline">
+                <span *ngFor="let doc of ['AADHAAR', 'PAN_CARD', 'SALARY_SLIP', 'BANK_STATEMENT']" 
+                      class="doc-tag" [class.done]="selectedFiles[doc]">
+                  {{ doc.replace('_', ' ') }} {{ selectedFiles[doc] ? '✓' : '✗' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </form>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="apply-nav">
+      <button class="btn-back" *ngIf="currentStep > 1" (click)="prevStep()">← Back</button>
+      <div *ngIf="currentStep === 1"></div>
+
+      <button class="btn-continue" *ngIf="currentStep < 5" 
+              [disabled]="(currentStep === 1 && (form.get('firstName')?.invalid || form.get('lastName')?.invalid || form.get('phone')?.invalid || form.get('address')?.invalid)) || 
+                         (currentStep === 3 && form.get('loanAmount')?.invalid) ||
+                         (currentStep === 4 && !selectedFiles['AADHAAR'])"
+              (click)="nextStep()">Continue →</button>
+      
+      <button class="btn-continue" *ngIf="currentStep === 5" (click)="submit()" [disabled]="loading || form.invalid">
+        {{ loading ? 'Processing...' : 'Pay ₹500 & Submit →' }}
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Success Popup -->
+<div class="modal-backdrop" *ngIf="showSuccessPopup">
+  <div class="modal-box">
+    <div class="success-circle">✓</div>
+    <h2>Success!</h2>
+    <p>Your application has been received.</p>
+    <button (click)="continueToDashboard()">Back to Dashboard</button>
+  </div>
+</div>

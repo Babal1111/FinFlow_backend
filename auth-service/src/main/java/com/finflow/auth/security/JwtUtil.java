@@ -22,7 +22,7 @@ public class JwtUtil {
     @Value("${jwt.expiration}") // access token expiry (e.g. 15 min)
     private long accessExpiration;
 
-    private final long refreshExpiration = 1000L * 60 * 60 * 24 * 7; // 7 days
+    //private final long refreshExpiration = 1000L * 60 * 60 * 24 * 7; // 7 days
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());

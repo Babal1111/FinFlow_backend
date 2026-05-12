@@ -5,6 +5,6 @@ public enum DocumentType {
     AADHAAR,
     SALARY_SLIP,
     BANK_STATEMENT,
-    ITR,
-    PHOTOGRAPH
+//    ITR,
+//    PHOTOGRAPH
 }

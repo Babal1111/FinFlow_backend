@@ -15,6 +15,11 @@
     <name>Auth Service</name>
     <description>Handles user registration, login and JWT token generation</description>
 
+    <properties>
+        <sonar.projectKey>auth-service</sonar.projectKey>
+        <sonar.projectName>Auth Service</sonar.projectName>
+    </properties>
+
     <dependencies>
 
         <!-- Spring Web - REST APIs banane ke liye -->

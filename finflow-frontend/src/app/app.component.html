@@ -1,0 +1,102 @@
+<!-- Authenticated Shell -->
+<div *ngIf="showShell" class="app-shell shell-active">
+  <!-- Clean Banking Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <!-- Logo -->
+      <a [routerLink]="homePath" class="header-logo">
+        <div class="logo-icon-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+          </svg>
+        </div>
+        <div class="logo-text-block">
+          <span class="logo-name">FinFlow</span>
+          <span class="logo-tagline">LENDING FOR INDIA · EST. 2014</span>
+        </div>
+      </a>
+
+      <!-- Nav Links -->
+      <nav class="header-nav">
+        <a *ngIf="role === 'APPLICANT'" routerLink="/applicant/dashboard" class="nav-item"
+          routerLinkActive="nav-item-active">Dashboard</a>
+        <a *ngIf="role === 'APPLICANT'" routerLink="/applicant/apply" class="nav-item"
+          routerLinkActive="nav-item-active">Apply</a>
+        <a *ngIf="role === 'ADMIN'" routerLink="/admin/dashboard" class="nav-item"
+          routerLinkActive="nav-item-active">Home</a>
+        <a *ngIf="role === 'ADMIN'" routerLink="/admin/reports" class="nav-item"
+          routerLinkActive="nav-item-active">Reports</a>
+        <a *ngIf="role === 'ADMIN'" routerLink="/admin/users" class="nav-item" routerLinkActive="nav-item-active">Users</a>
+      </nav>
+
+      <!-- User Info + Logout -->
+      <div class="header-right">
+        <div class="user-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <span>{{ userEmail }}</span>
+        </div>
+        <button type="button" (click)="logout()" class="logout-btn">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="site-main">
+    <router-outlet />
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="logo-icon-box small">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="footer-logo-name">FinFlow</span>
+            <span class="footer-logo-tag">LENDING FOR INDIA · EST. 2014</span>
+          </div>
+        </div>
+        <p class="footer-desc">
+          An Indian lending company serving families and businesses across the country.
+          Personal underwriting, transparent terms, and no algorithms behind the curtain.
+        </p>
+      </div>
+
+      <div class="footer-grid">
+        <div class="footer-col">
+          <span class="col-title">OFFICE</span>
+          <p>Level 7, Prestige Trade Tower<br>Palace Road<br>Bengaluru 560001</p>
+        </div>
+        <div class="footer-col">
+          <span class="col-title">HOURS</span>
+          <p>Mon — Fri · 09:30 — 18:30 IST<br>Sat by appointment</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <span class="copyright">© 2026 FinFlow Financial Services Pvt. Ltd. All rights reserved.</span>
+        <div class="legal-links">
+          <span>RBI registered NBFC · CIN U65929KA2014PTC074118</span>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Auth / Landing Pages (No Shell) -->
+<div *ngIf="!showShell" class="auth-wrapper">
+  <router-outlet />
+</div>

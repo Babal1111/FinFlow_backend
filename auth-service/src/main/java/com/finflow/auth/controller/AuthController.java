@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -46,5 +47,23 @@ public class AuthController {
     @GetMapping("/test")
     public String test() {
         return "JWT working";
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<java.util.Map<String, Object>> getUserById(@PathVariable Long id) {
+        log.info("Get user by id: {}", id);
+        return ResponseEntity.ok(authService.getUserById(id));
+    }
+
+    @GetMapping("/users/all")
+//    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<java.util.List<java.util.Map<String, Object>>> getAllUsers(
+//            @RequestHeader("X-User-Role") String role
+    ) {
+//        if(!role.equals("ADMIN")){
+//            throw  new RuntimeException("ACESS DENIED");
+//        }
+        log.info("Get all users request");
+        return ResponseEntity.ok(authService.getAllUsers());
     }
 }

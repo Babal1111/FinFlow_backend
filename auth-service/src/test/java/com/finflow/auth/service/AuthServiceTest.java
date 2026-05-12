@@ -151,4 +151,37 @@ class AuthServiceTest {
 
         assertEquals("User not found", ex.getMessage());
     }
+
+    // --- getUserById ---
+    @Test
+    @DisplayName("getUserById: should return user map when found")
+    void getUserById_shouldReturnMap() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(savedUser));
+
+        java.util.Map<String, Object> result = authService.getUserById(1L);
+
+        assertEquals(1L, result.get("id"));
+        assertEquals("john@example.com", result.get("email"));
+        assertEquals("APPLICANT", result.get("role"));
+    }
+
+    @Test
+    @DisplayName("getUserById: should throw when user not found")
+    void getUserById_shouldThrow_whenNotFound() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> authService.getUserById(99L));
+    }
+
+    // --- getAllUsers ---
+    @Test
+    @DisplayName("getAllUsers: should return list of user maps")
+    void getAllUsers_shouldReturnList() {
+        when(userRepository.findAll()).thenReturn(java.util.List.of(savedUser));
+
+        java.util.List<java.util.Map<String, Object>> result = authService.getAllUsers();
+
+        assertEquals(1, result.size());
+        assertEquals("john@example.com", result.get(0).get("email"));
+    }
 }

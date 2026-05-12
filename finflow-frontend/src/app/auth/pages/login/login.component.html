@@ -1,0 +1,67 @@
+<div class="auth-page">
+  <!-- Left Side: Branding -->
+  <div class="auth-sidebar">
+    <div class="logo-group">
+      <div class="logo-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M3 21h18M3 10l9-7 9 7v11H3V10z" />
+          <path d="M9 21V10l3-2 3 2v11" />
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>FinFlow</h1>
+        <p>LENDING FOR INDIA - EST. 2014</p>
+      </div>
+    </div>
+
+    <div class="quote-section">
+      <blockquote class="quote">
+        "Some things — like character, and a good harvest — still take time. We'd rather get it right."
+      </blockquote>
+      <cite class="author">— Babalpreet Singh, Senior Partner, FinFlow</cite>
+    </div>
+  </div>
+
+  <!-- Right Side: Form -->
+  <div class="auth-main">
+    <div class="form-wrapper">
+      <header class="form-header">
+        <span class="eyebrow">ACCOUNT</span>
+        <h2 class="title">Welcome back.</h2>
+        <p class="subtitle">Sign in to continue your application.</p>
+      </header>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email" placeholder="name@company.com" autocomplete="email">
+        </div>
+
+        <div class="form-field">
+          <label for="password">Password</label>
+          <input id="password" type="password" formControlName="password" placeholder="••••••••"
+            autocomplete="current-password">
+        </div>
+         <!-- @if(form.invalid){
+            <div>please re-enter the dettails</div>
+          } -->
+
+          <!-- @if(!form.email.touched && !form.password.touched){
+                <div>please enter the dettails</div>
+
+          } -->
+
+        <button type="submit" class="btn-primary" [disabled]="loading || form.invalid">
+          
+         
+          {{ loading ? 'Signing in...' : 'Sign in' }}
+        </button>
+      </form>
+
+      <footer class="form-footer">
+        <p>Don't have an account? <a routerLink="/auth/signup">Open one in two minutes.</a></p>
+        <a routerLink="/" class="back-link">← Back to home</a>
+      </footer>
+    </div>
+  </div>
+</div>

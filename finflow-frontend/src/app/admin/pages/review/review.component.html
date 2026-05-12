@@ -1,0 +1,187 @@
+<div class="page-wrapper">
+  <div class="page-container">
+
+    <div class="mb-12">
+      <a routerLink="/admin/dashboard"
+        class="text-sm text-bank-gray-500 flex items-center gap-2 mb-8 hover:text-bank-navy transition-all">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to queue
+      </a>
+
+      <div class="flex flex-col md:flex-row justify-between items-end gap-6">
+        <div>
+          <span class="page-eyebrow">CASE REVIEW · {{ applicationId | number: '6.0-0' | slice:0:8 | uppercase }}</span>
+          <h1 class="page-title text-5xl">{{ application?.firstName }} {{ application?.lastName }}</h1>
+          <div class="flex items-center gap-6 mt-4">
+            <span class="status-badge" [ngClass]="'status-' + application?.status?.toLowerCase()?.replace('_','-')">
+              <span class="status-dot"></span>
+              {{ application?.status | titlecase }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Left: Application Details -->
+      <div class="md:col-span-2 space-y-8">
+
+        <!-- Applicant Details -->
+        <div class="luxe-card interactive-luxe !p-10">
+          <h2 class="card-title text-2xl mb-8">Applicant Details</h2>
+          <div class="detail-grid">
+            <div>
+              <span class="detail-label">FULL NAME</span>
+              <span class="detail-value">{{ application?.firstName }} {{ application?.lastName }}</span>
+            </div>
+            <div>
+              <span class="detail-label">PHONE NUMBER</span>
+              <span class="detail-value">{{ application?.phone || 'Not provided' }}</span>
+            </div>
+            <div>
+              <span class="detail-label">EMPLOYER</span>
+              <span class="detail-value">{{ application?.employerName || 'Not provided' }}</span>
+            </div>
+            <div>
+              <span class="detail-label">MONTHLY INCOME</span>
+              <span class="detail-value">₹{{ application?.monthlyIncome | number }}</span>
+            </div>
+            <div class="col-span-2">
+              <span class="detail-label">ADDRESS</span>
+              <span class="detail-value">{{ application?.address || 'Not provided' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loan Request -->
+        <div class="luxe-card interactive-luxe !p-10">
+          <h2 class="card-title text-2xl mb-8">Loan Request</h2>
+          <div class="grid grid-cols-3 gap-8">
+            <div>
+              <span class="detail-label">AMOUNT REQUESTED</span>
+              <span class="detail-value text-2xl text-bank-navy">₹{{ application?.loanAmount | number }}</span>
+            </div>
+            <div>
+              <span class="detail-label">PURPOSE</span>
+              <span class="detail-value">{{ application?.purpose }}</span>
+            </div>
+            <div>
+              <span class="detail-label">TENURE</span>
+              <span class="detail-value">{{ application?.tenureMonths }} months</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verification Documents -->
+        <div class="luxe-card interactive-luxe !p-10">
+          <h2 class="card-title text-2xl mb-8">Verification Documents</h2>
+
+          <div *ngIf="loadingDocs" class="py-6 text-center">
+            <div class="spinner mx-auto mb-2"></div>
+            <p class="text-xs text-bank-gray-400">Loading documents...</p>
+          </div>
+
+          <div *ngIf="!loadingDocs && documents.length === 0" class="py-6 text-center italic text-bank-gray-400">
+            No documents uploaded for this case.
+          </div>
+
+          <div class="space-y-4" *ngIf="!loadingDocs && documents.length > 0">
+            <div *ngFor="let doc of documents" class="doc-verification-card">
+              <div class="flex items-center gap-4">
+                <div class="bg-white p-3 border border-bank-border">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-medium text-bank-navy">{{ doc.documentType }}</p>
+                  <p class="text-xs text-bank-gray-400 mt-1">{{ doc.fileName }}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-4">
+                <button (click)="viewDocument(doc.id)"
+                  class="text-xs font-bold text-bank-navy uppercase tracking-wider hover:underline">View</button>
+
+                <div class="flex gap-2"
+                  *ngIf="application?.status !== 'APPROVED' && application?.status !== 'REJECTED'">
+                  <button (click)="verifyDocument(doc.id, true)" [disabled]="doc.status === 'VERIFIED'"
+                    class="btn-verify">Verify</button>
+                  <button (click)="verifyDocument(doc.id, false)" [disabled]="doc.status === 'REJECTED'"
+                    class="btn-reject">Reject</button>
+                </div>
+
+                <span class="status-badge" [class.status-approved]="doc.status === 'VERIFIED'"
+                  [class.status-rejected]="doc.status === 'REJECTED'"
+                  *ngIf="application?.status === 'APPROVED' || application?.status === 'REJECTED' || doc.status === 'VERIFIED' || doc.status === 'REJECTED'">
+                  <span class="status-dot"></span>
+                  {{ doc.status }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Decision Sidebar -->
+      <div class="decision-sidebar">
+        <div class="luxe-card interactive-luxe !p-8 border-t-4 !border-t-bank-navy">
+          <h2 class="card-title mb-6">Underwriter Decision</h2>
+
+          <!-- State: Needs review start -->
+          <div
+            *ngIf="application?.status !== 'UNDER_REVIEW' && application?.status !== 'APPROVED' && application?.status !== 'REJECTED' && application?.status !== 'CLOSED'"
+            class="text-center py-6">
+            <p class="text-sm text-bank-gray-500 mb-6">Case must be in 'Under Review' status to finalize a decision.</p>
+            <button (click)="startReview()" class="btn-primary w-full justify-center">Start Review</button>
+          </div>
+
+          <!-- State: Finalized -->
+          <div
+            *ngIf="application?.status === 'APPROVED' || application?.status === 'REJECTED' || application?.status === 'CLOSED'"
+            class="text-center py-6">
+            <div class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4"
+              [ngClass]="application?.status === 'APPROVED' ? 'bg-[#ECFDF5] text-bank-emerald' : 'bg-[#FEF2F2] text-bank-rose'">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path *ngIf="application?.status === 'APPROVED'" stroke-linecap="round" stroke-linejoin="round"
+                  d="M5 13l4 4L19 7" />
+                <path *ngIf="application?.status !== 'APPROVED'" stroke-linecap="round" stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-medium text-bank-navy uppercase tracking-widest">{{ application?.status }}</h3>
+            <p class="text-xs text-bank-gray-400 mt-2">This case has been finalized.</p>
+          </div>
+
+          <!-- State: Actionable -->
+          <form *ngIf="application?.status === 'UNDER_REVIEW'" [formGroup]="form" class="space-y-6">
+            <div>
+              <label class="detail-label">FINAL DECISION</label>
+              <select class="select-banking" formControlName="decision">
+                <option value="APPROVED">APPROVE APPLICATION</option>
+                <option value="REJECTED">REJECT APPLICATION</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="detail-label">INTERNAL REMARKS</label>
+              <textarea formControlName="remarks" class="input-banking" rows="4"
+                placeholder="Justify the decision..."></textarea>
+            </div>
+
+            <button type="button" (click)="submit()" [disabled]="form.invalid || submitting"
+              class="btn-primary w-full justify-center"
+              [class.!bg-bank-emerald]="form.get('decision')?.value === 'APPROVED'"
+              [class.!bg-bank-rose]="form.get('decision')?.value === 'REJECTED'">
+              {{ submitting ? 'Processing...' : 'Confirm ' + (form.get('decision')?.value | titlecase) }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

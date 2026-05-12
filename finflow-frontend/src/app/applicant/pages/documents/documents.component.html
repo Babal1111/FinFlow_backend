@@ -1,0 +1,109 @@
+<div class="page-wrapper animate-fade-in">
+  <div class="page-container">
+    <div class="page-header">
+      <div>
+        <span class="page-eyebrow">DOCUMENTATION</span>
+        <h1 class="page-title text-4xl">Upload Documents</h1>
+        <p class="page-subtitle">Application #{{ applicationId }} — Upload required supporting documents</p>
+      </div>
+    </div>
+
+  <!-- No Application Warning -->
+  <div *ngIf="!canUploadDocuments" class="luxe-card interactive-luxe" style="border-color: rgba(245, 158, 11, 0.3);">
+    <div class="flex items-start gap-3">
+      <svg class="w-5 h-5 mt-0.5 flex-shrink-0" style="color: #fbbf24;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+      </svg>
+      <div>
+        <p class="font-semibold text-sm" style="color: #fbbf24;">No Application Selected</p>
+        <p class="text-sm mt-1" style="color: var(--text-secondary);">Please submit a loan application first to upload documents.</p>
+        <a routerLink="/applicant/apply" class="btn-primary interactive-luxe inline-flex items-center gap-2 mt-3 text-xs">
+          Go to Application Form
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Document Slots -->
+  <div *ngIf="canUploadDocuments" class="space-y-4">
+    <div *ngFor="let slot of slots" class="luxe-card interactive-luxe !p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+          [style.background]="isUploaded(slot) ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.05)'">
+          <svg *ngIf="isUploaded(slot)" class="w-5 h-5" style="color: #34d399;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          <svg *ngIf="!isUploaded(slot)" class="w-5 h-5" style="color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-sm" style="color: var(--text-primary);">{{ slot.replace('_', ' ') }}</p>
+          <p class="text-xs mt-0.5">
+            <span *ngIf="isUploaded(slot)" [ngClass]="getDocStatus(slot) === 'VERIFIED' ? 'badge-verified' : getDocStatus(slot) === 'REJECTED' ? 'badge-rejected' : 'badge-pending'">
+              {{ getDocStatus(slot) }}
+            </span>
+            <span *ngIf="!isUploaded(slot)" style="color: var(--text-muted);">Awaiting upload</span>
+          </p>
+        </div>
+      </div>
+      <div>
+        <label *ngIf="!isUploaded(slot)" class="btn-primary interactive-luxe cursor-pointer text-xs !px-4 !py-2 inline-flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+          </svg>
+          Choose File
+          <input type="file" class="hidden" [disabled]="!canUploadDocuments || uploading" (change)="upload($event, slot)" />
+        </label>
+        <span *ngIf="isUploaded(slot)" class="text-xs font-medium px-3 py-1.5 rounded-lg inline-flex items-center gap-1"
+          style="background: rgba(16, 185, 129, 0.1); color: #34d399;">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          Uploaded
+        </span>
+      </div>
+    </div>
+
+    <!-- Submit Bar -->
+    <div class="luxe-card interactive-luxe !p-4 flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top: 2px solid rgba(99, 102, 241, 0.2);">
+      <div>
+        <p *ngIf="missingCount > 0" class="text-sm" style="color: #fbbf24;">
+          {{ missingCount }} required document(s) still pending
+        </p>
+        <p *ngIf="missingCount === 0" class="text-sm font-medium" style="color: #34d399;">
+          ✓ All required documents uploaded
+        </p>
+      </div>
+      <button
+        type="button"
+        (click)="submitDocuments()"
+        [disabled]="!canUploadDocuments || missingCount > 0 || uploading || submitting"
+        class="btn-primary interactive-luxe flex items-center gap-2">
+        <svg *ngIf="submitting" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        {{ submitting ? 'Submitting...' : 'Submit Documents' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Success Popup -->
+<div *ngIf="showSuccessPopup" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);">
+    <div class="luxe-card interactive-luxe w-full max-w-md text-center animate-fade-in">
+      <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background: rgba(16, 185, 129, 0.15);">
+        <svg class="w-8 h-8" style="color: #34d399;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <h2 class="text-xl font-bold mb-2" style="color: var(--text-primary);">Documents Submitted!</h2>
+      <p class="text-sm mb-6" style="color: var(--text-secondary);">
+        Your documents have been submitted for verification. We will notify you once they are reviewed.
+      </p>
+      <button type="button" (click)="continueToDashboard()" class="btn-primary interactive-luxe w-full">
+        Return to Dashboard
+      </button>
+    </div>
+</div>

@@ -78,4 +78,26 @@ public class AuthService {
                 user.getId()
         );
     }
+
+    public java.util.Map<String, Object> getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return java.util.Map.of(
+            "id", user.getId(),
+            "email", user.getEmail(),
+            "name", user.getName(),
+            "role", user.getRole().name()
+        );
+    }
+
+    public java.util.List<java.util.Map<String, Object>> getAllUsers() {
+        return userRepository.findAll().stream()
+            .map(user -> java.util.Map.of(
+                "id", (Object)user.getId(),
+                "email", (Object)user.getEmail(),
+                "name", (Object)user.getName(),
+                "role", (Object)user.getRole().name()
+            ))
+            .collect(java.util.stream.Collectors.toList());
+    }
 }

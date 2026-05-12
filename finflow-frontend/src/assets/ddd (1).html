@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Java Collections & Stream API Quiz | 50 MCQs</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Roboto, 'Fira Code', monospace, system-ui;
+      background: linear-gradient(135deg, #0b1e33 0%, #1a2f40 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+    }
+    .quiz-container {
+      width: 100%;
+      max-width: 780px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: #f0f4f8;
+      border-radius: 2.8rem;
+      box-shadow: 0 35px 55px rgba(0, 0, 0, 0.6), 0 10px 20px rgba(0,0,0,0.5);
+      padding: 2rem 2rem 2.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.2s;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      background: #0b2b44;
+      padding: 0.9rem 1.8rem;
+      border-radius: 3rem;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+    .topic-tag {
+      background: #f59e0b;
+      color: #0f172a;
+      padding: 0.3rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .progress-badge {
+      background: #3b82f6;
+      padding: 0.5rem 1.3rem;
+      border-radius: 2rem;
+      font-size: 0.9rem;
+    }
+    .question-text {
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: #0b1e33;
+      line-height: 1.4;
+      margin: 0.3rem 0 0.7rem;
+      word-break: break-word;
+      background: #ffffffd6;
+      padding: 0.8rem 1.2rem;
+      border-radius: 1.5rem;
+    }
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin: 0.3rem 0 1rem;
+    }
+    .option-item {
+      background: white;
+      border: 2px solid #cbd5e1;
+      border-radius: 1.4rem;
+      padding: 0.95rem 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1e293b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      word-break: break-word;
+    }
+    .option-item:hover:not(.disabled-option) {
+      border-color: #2563eb;
+      background: #eef4ff;
+      transform: scale(1.02);
+      box-shadow: 0 12px 20px rgba(37,99,235,0.2);
+    }
+    .option-letter {
+      background: #e2e8f0;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: bold;
+      color: #1e293b;
+      flex-shrink: 0;
+    }
+    .selected-correct {
+      background: #10b981;
+      border-color: #047857;
+      color: white;
+    }
+    .selected-correct .option-letter {
+      background: white;
+      color: #047857;
+    }
+    .selected-wrong {
+      background: #ef4444;
+      border-color: #b91c1c;
+      color: white;
+    }
+    .selected-wrong .option-letter {
+      background: white;
+      color: #b91c1c;
+    }
+    .disabled-option {
+      opacity: 0.85;
+      cursor: default;
+      pointer-events: none;
+    }
+    .explanation-box {
+      background: #e6f0ff;
+      border-radius: 1.2rem;
+      padding: 1rem 1.5rem;
+      border-left: 6px solid #2563eb;
+      color: #0b1e33;
+      font-size: 1rem;
+      margin: 0.6rem 0 0.2rem;
+      font-weight: 500;
+      background: #f1f5f9;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 0.7rem;
+    }
+    button {
+      background: white;
+      border: none;
+      padding: 0.9rem 1.8rem;
+      border-radius: 2.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      background: #0f172a;
+      color: white;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    button:hover:not(:disabled) {
+      background: #1e293b;
+      box-shadow: 0 12px 22px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
+    }
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: #475569;
+      box-shadow: none;
+    }
+    .result-screen {
+      text-align: center;
+      padding: 1.2rem 0;
+    }
+    .score-circle {
+      font-size: 3.6rem;
+      font-weight: 800;
+      background: #0b2b44;
+      color: white;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.2rem;
+      box-shadow: 0 18px 35px rgba(0,0,0,0.5);
+    }
+    .restart-btn {
+      background: #f59e0b;
+      color: #0f172a;
+      margin: 1.2rem auto 0;
+      justify-content: center;
+      font-weight: 800;
+    }
+    @media (max-width: 500px) {
+      .quiz-container { padding: 1.5rem; }
+      .question-text { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="quiz-container" id="quizApp">
+  <!-- dynamic js -->
+</div>
+
+<script>
+  (function() {
+    // ---------- 50 Java Collections & Stream API MCQs ----------
+    const questions = [
+      { q: "Which collection class is synchronized?", options: ["ArrayList", "Vector", "LinkedList", "HashSet"], correct: 1, explanation: "Vector is synchronized (thread-safe), while ArrayList and others are not." },
+      { q: "What does Map interface store?", options: ["Only keys", "Key-value pairs", "Only values", "Indexed elements"], correct: 1, explanation: "Map stores key-value pairs, e.g., HashMap." },
+      { q: "Which method adds an element to a List?", options: ["put()", "add()", "insert()", "set()"], correct: 1, explanation: "add() is used to append elements to a List." },
+      { q: "Which collection does not allow duplicates?", options: ["ArrayList", "LinkedList", "HashSet", "Vector"], correct: 2, explanation: "HashSet implements Set and rejects duplicate elements." },
+      { q: "What is the default initial capacity of ArrayList?", options: ["8", "10", "16", "12"], correct: 1, explanation: "ArrayList default capacity is 10." },
+      { q: "Which interface does HashMap implement?", options: ["List", "Set", "Map", "Queue"], correct: 2, explanation: "HashMap implements the Map interface." },
+      { q: "Stream API was introduced in which Java version?", options: ["Java 7", "Java 8", "Java 9", "Java 11"], correct: 1, explanation: "Streams were introduced in Java 8 for functional-style operations." },
+      { q: "Which method transforms stream elements?", options: ["filter()", "map()", "collect()", "forEach()"], correct: 1, explanation: "map() applies a function to each element and returns a new stream." },
+      { q: "What does filter() do in a stream?", options: ["Sort elements", "Remove elements based on condition", "Add elements", "Count elements"], correct: 1, explanation: "filter() retains elements matching a Predicate." },
+      { q: "Which terminal operation collects stream into a List?", options: ["collect(Collectors.toList())", "toList()", "collectList()", "asList()"], correct: 0, explanation: "collect(Collectors.toList()) gathers stream elements into a List." },
+      { q: "TreeSet stores elements in?", options: ["Insertion order", "Sorted order", "Random order", "Reverse order"], correct: 1, explanation: "TreeSet implements SortedSet, storing elements in natural sorted order." },
+      { q: "Which method removes all elements from a Collection?", options: ["delete()", "removeAll()", "clear()", "empty()"], correct: 2, explanation: "clear() removes all elements from the collection." },
+      { q: "What is the parent interface of List, Set, Queue?", options: ["Map", "Collection", "Iterable", "ArrayList"], correct: 1, explanation: "Collection is the root interface for List, Set, Queue." },
+      { q: "Which stream method returns a stream of distinct elements?", options: ["unique()", "distinct()", "removeDuplicates()", "filter()"], correct: 1, explanation: "distinct() returns a stream with no duplicates." },
+      { q: "What does 'Optional' help avoid?", options: ["Memory leaks", "NullPointerException", "ClassCastException", "IOException"], correct: 1, explanation: "Optional is a container to avoid null references." },
+      { q: "Which method is used for sorting a stream?", options: ["orderBy()", "sorted()", "arrange()", "sortStream()"], correct: 1, explanation: "sorted() sorts stream elements, optionally with a Comparator." },
+      { q: "LinkedList implements which two interfaces?", options: ["List and Set", "List and Deque", "Set and Queue", "Map and List"], correct: 1, explanation: "LinkedList implements both List and Deque interfaces." },
+      { q: "What does 'limit(5)' do on a stream?", options: ["Skip 5 elements", "Take first 5 elements", "Sort 5 elements", "Filter 5"], correct: 1, explanation: "limit(5) truncates the stream to at most 5 elements." },
+      { q: "Which collector joins strings with delimiter?", options: ["Collectors.joining()", "Collectors.groupBy()", "Collectors.toList()", "Collectors.mapping()"], correct: 0, explanation: "Collectors.joining(\",\") concatenates stream elements." },
+      { q: "HashMap permits null keys?", options: ["Yes, one null key", "No", "Multiple null keys", "Only null values"], correct: 0, explanation: "HashMap allows one null key and multiple null values." },
+      { q: "Which method returns the size of a collection?", options: ["length()", "size()", "count()", "capacity()"], correct: 1, explanation: "size() returns the number of elements in the collection." },
+      { q: "Stream 'reduce' is used for?", options: ["Filtering", "Aggregation to single result", "Sorting", "Mapping"], correct: 1, explanation: "reduce performs a reduction on elements to produce one value." },
+      { q: "Which class implements a dynamic array?", options: ["LinkedList", "HashSet", "ArrayList", "TreeMap"], correct: 2, explanation: "ArrayList uses a resizable array internally." },
+      { q: "What does peek() do in a stream?", options: ["Terminal operation", "Intermediate operation for debugging", "Remove elements", "Sort"], correct: 1, explanation: "peek() allows performing action without consuming stream." },
+      { q: "Which collection maintains insertion order?", options: ["HashSet", "LinkedHashSet", "TreeSet", "HashMap"], correct: 1, explanation: "LinkedHashSet preserves insertion order." },
+      { q: "What is the return type of map()?", options: ["void", "Stream", "Collection", "Optional"], correct: 1, explanation: "map() returns a new Stream consisting of transformed elements." },
+      { q: "Which method checks if a key exists in Map?", options: ["contains()", "containsKey()", "hasKey()", "exists()"], correct: 1, explanation: "containsKey(Object key) checks key presence." },
+      { q: "Streams are?", options: ["Reusable", "Consumable only once", "Thread-safe", "Mutable"], correct: 1, explanation: "A stream can be consumed only once; reuse throws exception." },
+      { q: "Which method converts array to stream?", options: ["Stream.of()", "Arrays.stream()", "Collection.stream()", "Both A and B"], correct: 3, explanation: "Arrays.stream() and Stream.of() both create streams from arrays." },
+      { q: "What does flatMap() do?", options: ["Flatten nested structures", "Map and filter", "Sort", "Group"], correct: 0, explanation: "flatMap() flattens multiple streams into a single stream." },
+      { q: "Which collection is best for frequent insertion/deletion?", options: ["ArrayList", "LinkedList", "Vector", "Stack"], correct: 1, explanation: "LinkedList performs better for add/remove in middle due to node linking." },
+      { q: "What is the default load factor of HashMap?", options: ["0.5", "0.75", "1.0", "0.85"], correct: 1, explanation: "HashMap default load factor is 0.75." },
+      { q: "Which stream terminal operation returns a boolean?", options: ["anyMatch()", "collect()", "forEach()", "map()"], correct: 0, explanation: "anyMatch() returns true if any element matches predicate." },
+      { q: "Which method creates a parallel stream?", options: ["stream()", "parallelStream()", "parallel()", "both B and C"], correct: 3, explanation: "Collection.parallelStream() or stream().parallel() enables parallel processing." },
+      { q: "TreeMap sorts keys by?", options: ["Insertion order", "Natural order or Comparator", "Hash order", "Random"], correct: 1, explanation: "TreeMap orders keys using natural ordering or a provided Comparator." },
+      { q: "What does Collectors.groupingBy() return?", options: ["List", "Set", "Map", "String"], correct: 2, explanation: "groupingBy returns a Map grouping elements by classifier." },
+      { q: "Which method returns the first element of a stream?", options: ["first()", "findFirst()", "getFirst()", "top()"], correct: 1, explanation: "findFirst() returns an Optional describing the first element." },
+      { q: "HashSet internally uses?", options: ["LinkedList", "HashMap", "TreeMap", "Array"], correct: 1, explanation: "HashSet is backed by a HashMap instance." },
+      { q: "Which is thread-safe collection?", options: ["ArrayList", "CopyOnWriteArrayList", "LinkedList", "HashSet"], correct: 1, explanation: "CopyOnWriteArrayList is a thread-safe variant of ArrayList." },
+      { q: "What does 'skip(n)' do in stream?", options: ["Limit to n", "Discard first n elements", "Sort n elements", "Filter n"], correct: 1, explanation: "skip(n) returns a stream after removing first n elements." },
+      { q: "Which method returns max element from stream?", options: ["max(Comparator)", "max()", "maximum()", "greatest()"], correct: 0, explanation: "max(Comparator) returns the maximum element according to comparator." },
+      { q: "Which collection does not implement Collection interface?", options: ["ArrayList", "HashSet", "Map", "LinkedList"], correct: 2, explanation: "Map is not a subtype of Collection; it's separate hierarchy." },
+      { q: "What is a key characteristic of Set?", options: ["Allows duplicates", "No duplicates", "Indexed access", "Key-value"], correct: 1, explanation: "Set ensures no duplicate elements." },
+      { q: "Which method counts elements in stream?", options: ["size()", "count()", "length()", "total()"], correct: 1, explanation: "count() is a terminal operation returning number of elements." },
+      { q: "Which collector creates unmodifiable list? (Java 10+)", options: ["Collectors.toUnmodifiableList()", "Collectors.toList()", "List.of()", "immutableList()"], correct: 0, explanation: "Collectors.toUnmodifiableList() returns unmodifiable list." },
+      { q: "What is the difference between Collection and Collections?", options: ["No difference", "Collection is interface, Collections is utility class", "Both classes", "Both interfaces"], correct: 1, explanation: "Collection is an interface; Collections provides static utility methods." },
+      { q: "Which method removes element by index from List?", options: ["delete(index)", "remove(index)", "pop(index)", "clear(index)"], correct: 1, explanation: "remove(int index) removes element at specified position." },
+      { q: "Which stream operation is terminal?", options: ["map()", "filter()", "collect()", "peek()"], correct: 2, explanation: "collect() is terminal; map/filter/peek are intermediate." },
+      { q: "EnumSet is designed for?", options: ["Strings", "Enum constants", "Integers", "Objects"], correct: 1, explanation: "EnumSet is a specialized Set for enum types." },
+      { q: "What is the purpose of 'IntStream'?", options: ["Stream of objects", "Primitive int stream", "Double stream", "Parallel stream"], correct: 1, explanation: "IntStream is a sequence of primitive int-valued elements." }
+    ];
+
+    // App state
+    const TOTAL = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(TOTAL).fill(null); // stores selected option index or null
+    let answerSubmitted = new Array(TOTAL).fill(false);
+    let quizFinished = false;
+
+    const appEl = document.getElementById('quizApp');
+
+    function render() {
+      if (quizFinished) {
+        renderResultScreen();
+        return;
+      }
+
+      const qData = questions[currentIndex];
+      const selectedOption = userAnswers[currentIndex];
+      const submitted = answerSubmitted[currentIndex];
+
+      const progressText = `Question ${currentIndex + 1} of ${TOTAL}`;
+      let optionsHtml = '';
+      const letters = ['A', 'B', 'C', 'D'];
+
+      qData.options.forEach((opt, idx) => {
+        let optionClass = 'option-item';
+        if (submitted) {
+          optionClass += ' disabled-option';
+          if (idx === qData.correct) {
+            optionClass += ' selected-correct';
+          } else if (idx === selectedOption && idx !== qData.correct) {
+            optionClass += ' selected-wrong';
+          }
+        } else {
+          if (idx === selectedOption) {
+            optionClass += ' selected-correct'; // visually indicate selection before submit
+          }
+        }
+        optionsHtml += `
+          <div class="${optionClass}" data-option-index="${idx}">
+            <span class="option-letter">${letters[idx]}</span>
+            <span>${opt}</span>
+          </div>
+        `;
+      });
+
+      const explanationHtml = submitted ? `
+        <div class="explanation-box">
+          <strong>💡 Explanation:</strong> ${qData.explanation}
+        </div>` : '';
+
+      const prevDisabled = currentIndex === 0 ? 'disabled' : '';
+      const nextDisabled = (currentIndex === TOTAL - 1) ? 'disabled' : '';
+      const submitDisabled = (selectedOption === null || submitted) ? 'disabled' : '';
+
+      const html = `
+        <div class="header">
+          <span class="topic-tag">☕ Java Collections & Stream</span>
+          <span class="progress-badge">${progressText}</span>
+        </div>
+        <div class="question-text">${qData.q}</div>
+        <div class="options-grid" id="optionsContainer">
+          ${optionsHtml}
+        </div>
+        ${explanationHtml}
+        <div class="nav-buttons">
+          <button id="prevBtn" ${prevDisabled}>◀ Previous</button>
+          <button id="submitBtn" ${submitDisabled}>✔ Submit Answer</button>
+          <button id="nextBtn" ${nextDisabled}>Next ▶</button>
+        </div>
+        <div style="display:flex; justify-content:flex-end; margin-top:0.3rem;">
+          <button id="finishBtn" style="background:#b45309;">🏁 Finish Quiz</button>
+        </div>
+      `;
+
+      appEl.innerHTML = html;
+      attachEvents();
+    }
+
+    function attachEvents() {
+      if (quizFinished) return;
+
+      const optionsContainer = document.getElementById('optionsContainer');
+      if (optionsContainer) {
+        optionsContainer.querySelectorAll('.option-item').forEach(optDiv => {
+          optDiv.addEventListener('click', (e) => {
+            if (answerSubmitted[currentIndex]) return; // already submitted
+            const idx = parseInt(optDiv.dataset.optionIndex, 10);
+            userAnswers[currentIndex] = idx;
+            render(); // re-render to show selection highlight
+          });
+        });
+      }
+
+      document.getElementById('prevBtn')?.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          render();
+        }
+      });
+
+      document.getElementById('nextBtn')?.addEventListener('click', () => {
+        if (currentIndex < TOTAL - 1) {
+          currentIndex++;
+          render();
+        }
+      });
+
+      document.getElementById('submitBtn')?.addEventListener('click', () => {
+        if (answerSubmitted[currentIndex]) return;
+        if (userAnswers[currentIndex] === null) return;
+        answerSubmitted[currentIndex] = true;
+        render();
+      });
+
+      document.getElementById('finishBtn')?.addEventListener('click', () => {
+        // Mark any unanswered but selected? We'll just finish.
+        // Optionally auto-submit remaining?
+        if (confirm("Are you sure you want to finish the quiz? You can still review answers after finishing.")) {
+          quizFinished = true;
+          render();
+        }
+      });
+    }
+
+    function calculateScore() {
+      let correctCount = 0;
+      for (let i = 0; i < TOTAL; i++) {
+        if (userAnswers[i] === questions[i].correct) {
+          correctCount++;
+        }
+      }
+      return correctCount;
+    }
+
+    function renderResultScreen() {
+      const score = calculateScore();
+      const total = TOTAL;
+      const percentage = Math.round((score / total) * 100);
+
+      let reviewHtml = '';
+      for (let i = 0; i < total; i++) {
+        const q = questions[i];
+        const userAns = userAnswers[i];
+        const isCorrect = userAns === q.correct;
+        const userAnsText = userAns !== null ? q.options[userAns] : 'Not answered';
+        const correctAnsText = q.options[q.correct];
+        reviewHtml += `
+          <div style="background:white; border-radius:1rem; padding:0.8rem 1rem; margin-bottom:0.8rem; text-align:left; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            <p style="font-weight:700; margin-bottom:0.3rem;">${i+1}. ${q.q}</p>
+            <p style="margin:0.2rem 0; color:${isCorrect ? '#059669' : '#dc2626'}">
+              Your answer: ${userAnsText} ${isCorrect ? '✓' : '✗'}
+            </p>
+            ${!isCorrect ? `<p style="color:#1e40af;">Correct: ${correctAnsText}</p>` : ''}
+            <p style="font-size:0.9rem; color:#334155;"><strong>Explanation:</strong> ${q.explanation}</p>
+          </div>
+        `;
+      }
+
+      const html = `
+        <div class="result-screen">
+          <div class="score-circle">${score}/${total}</div>
+          <h2 style="color:#0f172a; margin:0.3rem 0;">Your Score: ${percentage}%</h2>
+          <p style="color:#334155; margin-bottom:1rem;">${score >= 40 ? '🌟 Excellent!' : score >= 30 ? '👍 Good job!' : '📘 Keep learning!'}</p>
+          <div style="max-height: 55vh; overflow-y: auto; padding-right: 6px; margin:1rem 0;">
+            ${reviewHtml}
+          </div>
+          <button id="restartQuizBtn" class="restart-btn">🔄 Restart Quiz</button>
+        </div>
+      `;
+
+      appEl.innerHTML = html;
+      document.getElementById('restartQuizBtn').addEventListener('click', () => {
+        currentIndex = 0;
+        userAnswers = new Array(TOTAL).fill(null);
+        answerSubmitted = new Array(TOTAL).fill(false);
+        quizFinished = false;
+        render();
+      });
+    }
+
+    // Initial render
+    render();
+  })();
+</script>
+</body>
+</html>
